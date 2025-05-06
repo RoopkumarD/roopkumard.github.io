@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="Introduction
+One fine evening while I was out walking, I thought—why not record data from an offline retail clothing store and do some data analysis? I’m currently learning data analysis, and I wanted to actually use my knowledge, try stuff out, and hopefully learn something new. This report is the journey of me going from data collection all the way to analysis.
+After finishing everything, I can confidently say that my domain knowledge helped a lot during both the data collection and analysis process. It was honestly the main reason I could come up with the right questions to ask and actually answer them in a meaningful way. That domain knowledge came from me working in the shop for a few months, so I had some idea of how things worked on the ground.">  
+
+  <title>
+    
+      Retail Clothing Store Data Analysis
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.900100e9dbee2d56c58fac8bb717037cae7e26a9c36c29d2ff587bdd65f0cbbe510b41d81a3bb234919cdfdc7550d786b2fab70c8fc507772d732fe097106d12.css" integrity="sha512-kAEA6dvuLVbFj6yLtxcDfK5&#43;JqnDbCnS/1h73WXwy75RC0HYGjuyNJGc39x1UNeGsvq3DI/FB3ctcy/glxBtEg==" />
+  
+</head>
+<body a="dark">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+                <div class="post-meta">
+                    <a href="/">..</a>
+
+                    <p>
+                        <time datetime="2025-05-06 03:18:12 &#43;0530 IST">
+                            2025-05-06
+                        </time>
+                    </p>
+                </div>
+
+<article>
+    <h1>Retail Clothing Store Data Analysis</h1>
+
+    
+        <aside  class="toc" >
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#data-collection">Data Collection</a></li>
+    <li><a href="#data-cleaning-and-feature-engineering">Data Cleaning and Feature Engineering</a></li>
+    <li><a href="#revenue-analysis">Revenue Analysis</a>
+      <ul>
+        <li><a href="#1-daily-revenue-trends">1. Daily Revenue Trends</a></li>
+        <li><a href="#2-weekly-revenue-comparison">2. Weekly Revenue Comparison</a></li>
+      </ul>
+    </li>
+    <li><a href="#day-wise-revenue--quantity-analysis">Day-wise Revenue &amp; Quantity Analysis</a>
+      <ul>
+        <li><a href="#1-revenue-distribution-by-day-of-the-week">1. Revenue Distribution by Day of the Week</a></li>
+        <li><a href="#2-is-revenue-correlated-with-quantity-sold">2. Is Revenue Correlated with Quantity Sold?</a></li>
+        <li><a href="#3-quantity-distribution-by-day-of-the-week">3. Quantity Distribution by Day of the Week</a></li>
+        <li><a href="#note-on-data-period">Note on Data Period</a></li>
+      </ul>
+    </li>
+    <li><a href="#q2-what-is-the-customer-arrival-time-distribution">Q2: What is the Customer Arrival Time Distribution?</a>
+      <ul>
+        <li><a href="#1-overall-time-of-day-distribution">1. Overall Time-of-Day Distribution</a></li>
+        <li><a href="#2-time-of-day-distribution-by-day-of-week">2. Time-of-Day Distribution by Day of Week</a></li>
+        <li><a href="#3-whats-next">3. What&rsquo;s Next?</a></li>
+      </ul>
+    </li>
+    <li><a href="#product-category-analysis">Product Category Analysis</a>
+      <ul>
+        <li><a href="#understanding-how-revenue-is-generated-in-this-offline-retail-store">Understanding How Revenue Is Generated in This Offline Retail Store</a></li>
+        <li><a href="#revenue-distribution-by-product-category-and-gender">Revenue Distribution by Product Category and Gender</a></li>
+        <li><a href="#quantity-sold-by-product-category-and-gender">Quantity Sold by Product Category and Gender</a></li>
+        <li><a href="#temporal-distribution-of-product-sales">Temporal Distribution of Product Sales</a></li>
+        <li><a href="#key-insight">Key Insight</a></li>
+      </ul>
+    </li>
+    <li><a href="#analysis-of-individual-product-categories--challenges-and-learnings">Analysis of Individual Product Categories – Challenges and Learnings</a>
+      <ul>
+        <li><a href="#the-problem-i-discovered-midway">The Problem I Discovered Midway</a></li>
+        <li><a href="#a-data-driven-attempt-to-fix-it-clustering-by-unit-price">A Data-Driven Attempt to Fix It: Clustering by Unit Price</a></li>
+        <li><a href="#problems-with-clustering-approach">Problems with Clustering Approach</a></li>
+        <li><a href="#the-manual-fix-and-the-pain-that-came-with-it">The Manual Fix (and the Pain That Came With It)</a></li>
+        <li><a href="#fixing-description-field-for-clarity">Fixing Description Field for Clarity</a></li>
+      </ul>
+    </li>
+    <li><a href="#analysing-discounts-on-products">Analysing Discounts on Products</a>
+      <ul>
+        <li><a href="#feature-engineering">Feature Engineering</a></li>
+        <li><a href="#product-quantity-per-invoice">Product Quantity per Invoice</a></li>
+        <li><a href="#distribution-of-discount-pricedelta">Distribution of Discount (PriceDelta)</a></li>
+        <li><a href="#discounts-by-product-category">Discounts by Product Category</a></li>
+        <li><a href="#where-are-we-losing-the-most-money">Where Are We Losing the Most Money?</a></li>
+        <li><a href="#case-study-underwear-category">Case Study: Underwear Category</a></li>
+        <li><a href="#pricedelta-interactive-drop-down">PriceDelta Interactive Drop Down</a></li>
+      </ul>
+    </li>
+    <li><a href="#q4-product-level-analysis-within-each-category">Q4. Product-Level Analysis Within Each Category</a>
+      <ul>
+        <li><a href="#cleaning-product-descriptions">Cleaning Product Descriptions</a></li>
+        <li><a href="#product-performance-quantity-vs-revenue">Product Performance: Quantity vs Revenue</a></li>
+        <li><a href="#mapping-products-to-numbers">Mapping Products to Numbers</a></li>
+        <li><a href="#heatmap-product-demand-over-time">Heatmap: Product Demand Over Time</a></li>
+        <li><a href="#is-size-analysis-useful">Is Size Analysis Useful?</a></li>
+        <li><a href="#heatmap-size-demand-over-time">Heatmap: Size Demand Over Time</a></li>
+        <li><a href="#matrix-size-vs-product-feature">Matrix: Size vs Product Feature</a></li>
+        <li><a href="#heatmaps-by-size-over-time">Heatmaps by Size Over Time</a></li>
+        <li><a href="#product-category-dropdown">Product Category Dropdown</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#future-to-do-list">Future To-Do List</a></li>
+  </ul>
+</nav>
+        </aside>
+    
+
+    <h2 id="introduction">Introduction</h2>
+<p>One fine evening while I was out walking, I thought—why not record data from an offline retail clothing store and do some data analysis? I’m currently learning data analysis, and I wanted to actually <em>use</em> my knowledge, try stuff out, and hopefully learn something new. This report is the journey of me going from data collection all the way to analysis.</p>
+<p>After finishing everything, I can confidently say that my domain knowledge helped a lot during both the data collection and analysis process. It was honestly the main reason I could come up with the right questions to ask and actually answer them in a meaningful way. That domain knowledge came from me working in the shop for a few months, so I had some idea of how things worked on the ground.</p>
+<p>This whole process also introduced me to the pain points of collecting data—like how important it is to collect it properly, and how missing small but important stuff can mess up the analysis later. I even had to go back at one point to collect extra data that I initially missed. (More on that later in the analysis section.)</p>
+<p>Just a heads-up: this report isn’t split cleanly into &ldquo;data collection&rdquo; and &ldquo;analysis&rdquo; sections. I’ve written it based on the actual timeline of how I worked on it. So yeah, I’ll be jumping back and forth between collecting more data, analysing it, and fixing stuff, because that’s how things naturally flowed—and honestly, it makes it more readable for me.</p>
+<p>Anyway, before diving into the analysis, I obviously need data to work with. The data here is about daily sales of products from a small offline retail clothing store. I’m trying to spot patterns that I can maybe use to help improve revenue growth. There’s a bit of nuance to what I mean by &ldquo;revenue growth,&rdquo; which I’ll explain more in the analysis phase.</p>
+<h2 id="data-collection">Data Collection</h2>
+<p>I remember the first time I went to ask if I could collect data from their shop, and they were like, <em>“Why do you want it?”</em> The only reason I could come up with was that I needed it for a data project I’m working on, and I wanted to use that project to apply for internships (which is actually true). Thankfully, they were kind enough to share details about all the sales they made.</p>
+<p>One good thing they already did was keep a daily record of prices for everything they sold. This helped them calculate total daily sales, and it also helped me because it jogged their memory about what was sold just by looking at the numbers written down.</p>
+<p>Also, I’m pretty close with the shop owner since I worked there for a few months. That’s the only reason I even had the guts to go ask for the data—<em>every single day</em>. Yep, every day by around 10:30 PM, I’d go to the shop, note the sales data on paper, and then come home and type everything into a spreadsheet by hand.</p>
+<p>Here’s one from the very first day of data collection: 26th March 2025.</p>
+<p><img src="images/first.jpg" alt="First Day Data Collection"></p>
+<p>Yeah, it’s kind of lame—I just wrote the price, the product they sold at that price, and other stuff like size, quantity, and unit price. It was super manual, and at the end of each day, I had to sit and transfer it all to a spreadsheet.</p>
+<p>You’ll notice I also added some extra metadata. For example, the time of sale is fuzzy if the payment was in cash because the shop owner couldn’t always remember exactly when each item was sold. But for online payments, I could get the exact time from the UPI business partner app.</p>
+<p>Another thing: since this is a small, unbranded clothing store, bargaining is a regular thing. So you&rsquo;ll notice that the unit prices vary even for the same product. But there’s a range, and if the price goes outside that, the sale usually doesn’t happen—the customer just walks out.</p>
+<p>Initially, I thought I’d record everything on my phone and send it to my workstation, but typing on the phone was painfully slow. I didn’t want to annoy them too much (which I already kinda did by asking them to repeat things two or three times), so I just stuck to good ol’ pen and paper.</p>
+<p>Once home, I wrote the data into a spreadsheet. These are the columns I decided to use:</p>
+<pre tabindex="0"><code>InvoiceNo -&gt; to aggregate single transaction (ranges from 1 to last)
+Clothes Description -&gt; product detail
+Size
+Quantity
+Unit Price
+Payment Mode -&gt; Online (UPI) | Cash
+Payment Date  -&gt; used payment date and time as that time the payment
+Payment Time  -&gt; was done and deal was finalized
+</code></pre><p>I didn’t know what kinds of products would be sold in the future, so I kept the structure general. I didn’t want to keep adding or removing columns every other day.</p>
+<p>Now, this whole data collection process was very manual—and I honestly hate that about it. I don’t yet know how I’d improve it, but if I could get digital data, I could at least use Python scripts to format it however I want.</p>
+<p>Since most of this data was based on the shopkeeper’s memory (especially for cash sales), there are two main sources of error:</p>
+<ol>
+<li><strong>Time errors</strong> for cash payments, and</li>
+<li><strong>Size field errors</strong>, since they didn’t initially note down sizes in their records. But that second issue got better after a few days—once they realised I was serious about this, they started writing down sizes too.</li>
+</ol>
+<p>I collected data like this for about 30 days before I jumped into the analysis.</p>
+<h2 id="data-cleaning-and-feature-engineering">Data Cleaning and Feature Engineering</h2>
+<p>I analysed the data using Python and its libraries in a Jupyter Notebook. First, here are the libraries I used:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> pandas <span style="color:#66d9ef">as</span> pd
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#66d9ef">as</span> plt
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> matplotlib.dates <span style="color:#66d9ef">as</span> mdates
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> matplotlib.ticker <span style="color:#66d9ef">as</span> ticker
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> seaborn <span style="color:#66d9ef">as</span> sns
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># i have not used but included it because</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># i tried something with it</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> sklearn.cluster <span style="color:#f92672">import</span> KMeans
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># to format number into showing in currency format</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> locale
+</span></span><span style="display:flex;"><span>locale<span style="color:#f92672">.</span>setlocale(locale<span style="color:#f92672">.</span>LC_MONETARY, <span style="color:#e6db74">&#39;en_IN&#39;</span>)
+</span></span><span style="display:flex;"><span>format_currency <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> x: locale<span style="color:#f92672">.</span>currency(x, grouping<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># to have some space between markdown and python cell</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># otherwise they feel quite congested</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> IPython.display <span style="color:#f92672">import</span> display, HTML
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>css <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&lt;style&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    .jp-Notebook .jp-Cell {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        margin-bottom: 16px !important;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&lt;/style&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>display(HTML(css))
+</span></span></code></pre></div><p>Then I imported the data and did some initial cleaning and feature engineering, especially focused on the product description field.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>df <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>read_csv(<span style="color:#e6db74">&#34;data.csv&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>final_df <span style="color:#f92672">=</span> df<span style="color:#f92672">.</span>copy()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># combining date and time to create datetime</span>
+</span></span><span style="display:flex;"><span>final_df[<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>] <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>to_datetime(final_df[<span style="color:#e6db74">&#34;PaymentDate&#34;</span>] <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; &#34;</span> <span style="color:#f92672">+</span> final_df[<span style="color:#e6db74">&#34;PaymentTime&#34;</span>])
+</span></span><span style="display:flex;"><span>final_df <span style="color:#f92672">=</span> final_df<span style="color:#f92672">.</span>drop(columns<span style="color:#f92672">=</span>[<span style="color:#e6db74">&#34;PaymentDate&#34;</span>, <span style="color:#e6db74">&#34;PaymentTime&#34;</span>])
+</span></span></code></pre></div><p>I also manually cleaned up the <code>Description</code> field. Some descriptions were inconsistent, so I fixed them in the spreadsheet itself, but this is the code I used to identify and fix common issues:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">final_df[&#34;Description&#34;] = final_df[&#34;Description&#34;].str.replace(&#34;1 Year&#34;, &#34;Baby&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">final_df[&#34;Description&#34;] = final_df[&#34;Description&#34;].str.replace(&#34;Peti Coat&#34;, &#34;Petticoat&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">final_df[&#34;Description&#34;] = final_df[&#34;Description&#34;].str.replace(&#34;Purple White&#34;, &#34;Purple&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">final_df[&#34;Description&#34;] = final_df[&#34;Description&#34;].str.replace(&#34;Bed Sheet&#34;, &#34;Bedsheet&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">final_df[&#34;Description&#34;] = final_df[&#34;Description&#34;].str.replace(&#34;Half Pants&#34;, &#34;Half Pant&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">final_df[&#34;Description&#34;] = final_df[&#34;Description&#34;].str.replace(&#34;Track Pants&#34;, &#34;Track Pant&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">final_df[&#34;Description&#34;] = final_df[&#34;Description&#34;].str.replace(&#34;Pants&#34;, &#34;Pant&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">final_df[&#34;Description&#34;] = final_df[&#34;Description&#34;].str.replace(&#34;Shirt + Jeans&#34;, &#34;Shirt + Jeans Set&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">final_df[&#34;Description&#34;] = final_df[&#34;Description&#34;].str.replace(&#34;T-Shirt + Track Pant&#34;, &#34;T-Shirt + Track Pant Set&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+</span></span></code></pre></div><p>After that, I explored all the unique product descriptions to figure out what kinds of structured features I could extract.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>set([row <span style="color:#66d9ef">for</span> _, row <span style="color:#f92672">in</span> final_df[<span style="color:#e6db74">&#34;Description&#34;</span>]<span style="color:#f92672">.</span>items()])
+</span></span></code></pre></div><p>From there, I decided to extract the following fields:</p>
+<ul>
+<li>Product Colour</li>
+<li>Product Category</li>
+<li>Product Company</li>
+<li>Product Gender</li>
+<li>Product Age Group</li>
+<li>Product Details (any leftover text not captured above)</li>
+</ul>
+<p>Since I had already manually reviewed the descriptions, I created lists of common values for each of these categories and wrote a function to extract them:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">description_feature_engineering</span>(desc_string):
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># first colour of product</span>
+</span></span><span style="display:flex;"><span>    colors <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Black&#34;</span>, <span style="color:#e6db74">&#34;Blue&#34;</span>, <span style="color:#e6db74">&#34;Dark Green&#34;</span>, <span style="color:#e6db74">&#34;Brown&#34;</span>, <span style="color:#e6db74">&#34;Grey&#34;</span>, <span style="color:#e6db74">&#34;Purple&#34;</span>, <span style="color:#e6db74">&#34;White&#34;</span>, <span style="color:#e6db74">&#34;Red&#34;</span>]
+</span></span><span style="display:flex;"><span>    matched_color <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> color <span style="color:#f92672">in</span> colors:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> color <span style="color:#f92672">in</span> desc_string:
+</span></span><span style="display:flex;"><span>            matched_color <span style="color:#f92672">=</span> color
+</span></span><span style="display:flex;"><span>            desc_string <span style="color:#f92672">=</span> desc_string<span style="color:#f92672">.</span>replace(matched_color, <span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">break</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># gender and age group</span>
+</span></span><span style="display:flex;"><span>    matched_gender <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>    matched_agegroup <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#34;Girl&#34;</span> <span style="color:#f92672">in</span> desc_string:
+</span></span><span style="display:flex;"><span>        matched_gender <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Female&#34;</span>
+</span></span><span style="display:flex;"><span>        matched_agegroup <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Girl&#34;</span>
+</span></span><span style="display:flex;"><span>        desc_string <span style="color:#f92672">=</span> desc_string<span style="color:#f92672">.</span>replace(matched_agegroup, <span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">elif</span> <span style="color:#e6db74">&#34;Ladies&#34;</span> <span style="color:#f92672">in</span> desc_string:
+</span></span><span style="display:flex;"><span>        matched_gender <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Female&#34;</span>
+</span></span><span style="display:flex;"><span>        matched_agegroup <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Ladies&#34;</span>
+</span></span><span style="display:flex;"><span>        desc_string <span style="color:#f92672">=</span> desc_string<span style="color:#f92672">.</span>replace(matched_agegroup, <span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">elif</span> <span style="color:#e6db74">&#34;Boy&#34;</span> <span style="color:#f92672">in</span> desc_string:
+</span></span><span style="display:flex;"><span>        matched_gender <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Male&#34;</span>
+</span></span><span style="display:flex;"><span>        matched_agegroup <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Boy&#34;</span>
+</span></span><span style="display:flex;"><span>        desc_string <span style="color:#f92672">=</span> desc_string<span style="color:#f92672">.</span>replace(matched_agegroup, <span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">elif</span> <span style="color:#e6db74">&#34;Mens&#34;</span> <span style="color:#f92672">in</span> desc_string:
+</span></span><span style="display:flex;"><span>        matched_gender <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Male&#34;</span>
+</span></span><span style="display:flex;"><span>        matched_agegroup <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Mens&#34;</span>
+</span></span><span style="display:flex;"><span>        desc_string <span style="color:#f92672">=</span> desc_string<span style="color:#f92672">.</span>replace(matched_agegroup, <span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">elif</span> <span style="color:#e6db74">&#34;Men&#34;</span> <span style="color:#f92672">in</span> desc_string:
+</span></span><span style="display:flex;"><span>        matched_gender <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Male&#34;</span>
+</span></span><span style="display:flex;"><span>        matched_agegroup <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Mens&#34;</span>
+</span></span><span style="display:flex;"><span>        desc_string <span style="color:#f92672">=</span> desc_string<span style="color:#f92672">.</span>replace(matched_agegroup, <span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#34;Baby&#34;</span> <span style="color:#f92672">in</span> desc_string:
+</span></span><span style="display:flex;"><span>        matched_agegroup <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Baby&#34;</span>
+</span></span><span style="display:flex;"><span>        desc_string <span style="color:#f92672">=</span> desc_string<span style="color:#f92672">.</span>replace(matched_agegroup, <span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">elif</span> <span style="color:#e6db74">&#34;Child&#34;</span> <span style="color:#f92672">in</span> desc_string <span style="color:#f92672">or</span> <span style="color:#e6db74">&#34;Kids&#34;</span> <span style="color:#f92672">in</span> desc_string <span style="color:#f92672">or</span> <span style="color:#e6db74">&#34;Little&#34;</span> <span style="color:#f92672">in</span> desc_string:
+</span></span><span style="display:flex;"><span>        matched_agegroup <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Kids&#34;</span>
+</span></span><span style="display:flex;"><span>        desc_string <span style="color:#f92672">=</span> desc_string<span style="color:#f92672">.</span>replace(matched_agegroup, <span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># company string</span>
+</span></span><span style="display:flex;"><span>    companies <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Adidas&#34;</span>, <span style="color:#e6db74">&#34;Ajanta&#34;</span>, <span style="color:#e6db74">&#34;Cotton Candy&#34;</span>, <span style="color:#e6db74">&#34;ESSA&#34;</span>, <span style="color:#e6db74">&#34;Eco Brand&#34;</span>, <span style="color:#e6db74">&#34;Evo&#34;</span>,
+</span></span><span style="display:flex;"><span>                 <span style="color:#e6db74">&#34;Foggy&#34;</span>, <span style="color:#e6db74">&#34;Gem&#34;</span>, <span style="color:#e6db74">&#34;Lux Cozi&#34;</span>, <span style="color:#e6db74">&#34;Lux Venus&#34;</span>, <span style="color:#e6db74">&#34;Macho&#34;</span>, <span style="color:#e6db74">&#34;Nike&#34;</span>, <span style="color:#e6db74">&#34;Selsia&#34;</span>,
+</span></span><span style="display:flex;"><span>                 <span style="color:#e6db74">&#34;Speed&#34;</span>, <span style="color:#e6db74">&#34;Stant&#34;</span>, <span style="color:#e6db74">&#34;Pooja Brand&#34;</span>]
+</span></span><span style="display:flex;"><span>    matched_company <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> company <span style="color:#f92672">in</span> companies:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> company <span style="color:#f92672">in</span> desc_string:
+</span></span><span style="display:flex;"><span>            matched_company <span style="color:#f92672">=</span> company
+</span></span><span style="display:flex;"><span>            desc_string <span style="color:#f92672">=</span> desc_string<span style="color:#f92672">.</span>replace(matched_company, <span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">break</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># category field</span>
+</span></span><span style="display:flex;"><span>    categories <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Handkerchief&#34;</span>, <span style="color:#e6db74">&#34;Socks&#34;</span>, <span style="color:#e6db74">&#34;Belt&#34;</span>, <span style="color:#e6db74">&#34;Cap&#34;</span>, <span style="color:#e6db74">&#34;Dungarees&#34;</span>, <span style="color:#e6db74">&#34;Frock&#34;</span>, <span style="color:#e6db74">&#34;Mask&#34;</span>, <span style="color:#e6db74">&#34;Towel&#34;</span>, <span style="color:#e6db74">&#34;Bedsheet&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;T-Shirt&#34;</span>, <span style="color:#e6db74">&#34;Shirt&#34;</span>, <span style="color:#e6db74">&#34;Track Pant&#34;</span>, <span style="color:#e6db74">&#34;Half Pant&#34;</span>, <span style="color:#e6db74">&#34;Pant&#34;</span>, <span style="color:#e6db74">&#34;Jeans&#34;</span>, <span style="color:#e6db74">&#34;Kurta&#34;</span>, <span style="color:#e6db74">&#34;Panties&#34;</span>,
+</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;Leggings&#34;</span>, <span style="color:#e6db74">&#34;Plazo&#34;</span>, <span style="color:#e6db74">&#34;Underwear&#34;</span>, <span style="color:#e6db74">&#34;Inner Slips&#34;</span>, <span style="color:#e6db74">&#34;Hand Gloves&#34;</span>, <span style="color:#e6db74">&#34;Dupatta&#34;</span>, <span style="color:#e6db74">&#34;Blouse&#34;</span>, <span style="color:#e6db74">&#34;Bra&#34;</span>, <span style="color:#e6db74">&#34;Nighties&#34;</span>,
+</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;Kurti&#34;</span>, <span style="color:#e6db74">&#34;Night Dress&#34;</span>, <span style="color:#e6db74">&#34;Petticoat&#34;</span>, <span style="color:#e6db74">&#34;Stoles&#34;</span>, <span style="color:#e6db74">&#34;Blanket&#34;</span>, <span style="color:#e6db74">&#34;Vest&#34;</span>, <span style="color:#e6db74">&#34;Wallet&#34;</span>, <span style="color:#e6db74">&#34;Pillow Cover&#34;</span>, <span style="color:#e6db74">&#34;Lungi&#34;</span>,
+</span></span><span style="display:flex;"><span>         <span style="color:#e6db74">&#34;Mosquito Net&#34;</span>, <span style="color:#e6db74">&#34;Saree&#34;</span>, <span style="color:#e6db74">&#34;Sindoor&#34;</span>, <span style="color:#e6db74">&#34;Set&#34;</span>
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>    matched_category <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>    matched_categories <span style="color:#f92672">=</span> []  <span style="color:#75715e"># list as we have to handle more than one case</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> category <span style="color:#f92672">in</span> categories:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> category <span style="color:#f92672">in</span> desc_string:
+</span></span><span style="display:flex;"><span>            matched_categories<span style="color:#f92672">.</span>append(category)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> len(matched_categories) <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>:
+</span></span><span style="display:flex;"><span>        matched_category <span style="color:#f92672">=</span> matched_categories[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>        desc_string <span style="color:#f92672">=</span> desc_string<span style="color:#f92672">.</span>replace(matched_categories[<span style="color:#ae81ff">0</span>], <span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">elif</span> len(matched_categories) <span style="color:#f92672">==</span> <span style="color:#ae81ff">2</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#34;Set&#34;</span> <span style="color:#f92672">in</span> matched_categories:
+</span></span><span style="display:flex;"><span>            matched_category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Set&#34;</span>
+</span></span><span style="display:flex;"><span>            desc_string <span style="color:#f92672">=</span> desc_string<span style="color:#f92672">.</span>replace(matched_category, <span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">elif</span> <span style="color:#e6db74">&#34;Jeans&#34;</span> <span style="color:#f92672">in</span> matched_categories <span style="color:#f92672">and</span> <span style="color:#e6db74">&#34;Shirt&#34;</span> <span style="color:#f92672">in</span> matched_categories:
+</span></span><span style="display:flex;"><span>            matched_category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Shirt&#34;</span>
+</span></span><span style="display:flex;"><span>            desc_string <span style="color:#f92672">=</span> desc_string<span style="color:#f92672">.</span>replace(matched_category, <span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># handling cases like &#34;T-Shirt&#34; both Shirt and T-Shirt is matched</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># same for Pant and Panties</span>
+</span></span><span style="display:flex;"><span>            bigger_cate <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>            smll_cate <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> len(matched_categories[<span style="color:#ae81ff">0</span>]) <span style="color:#f92672">&gt;</span> len(matched_categories[<span style="color:#ae81ff">1</span>]):
+</span></span><span style="display:flex;"><span>                bigger_cate <span style="color:#f92672">=</span> matched_categories[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>                smll_cate <span style="color:#f92672">=</span> matched_categories[<span style="color:#ae81ff">1</span>]
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>                bigger_cate <span style="color:#f92672">=</span> matched_categories[<span style="color:#ae81ff">1</span>]
+</span></span><span style="display:flex;"><span>                smll_cate <span style="color:#f92672">=</span> matched_categories[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> smll_cate <span style="color:#f92672">in</span> bigger_cate:
+</span></span><span style="display:flex;"><span>                matched_category <span style="color:#f92672">=</span> bigger_cate
+</span></span><span style="display:flex;"><span>                desc_string <span style="color:#f92672">=</span> desc_string<span style="color:#f92672">.</span>replace(matched_category, <span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">elif</span> len(matched_categories) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">2</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#34;Set&#34;</span> <span style="color:#f92672">in</span> matched_categories:
+</span></span><span style="display:flex;"><span>            matched_category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Set&#34;</span>
+</span></span><span style="display:flex;"><span>            desc_string <span style="color:#f92672">=</span> desc_string<span style="color:#f92672">.</span>replace(matched_category, <span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># details</span>
+</span></span><span style="display:flex;"><span>    cleaned_details <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39; &#39;</span><span style="color:#f92672">.</span>join(desc_string<span style="color:#f92672">.</span>split())
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> [matched_color, matched_category, matched_company, cleaned_details, matched_gender, matched_agegroup]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>features_df <span style="color:#f92672">=</span> final_df[<span style="color:#e6db74">&#39;Description&#39;</span>]<span style="color:#f92672">.</span>apply(description_feature_engineering)<span style="color:#f92672">.</span>apply(pd<span style="color:#f92672">.</span>Series)
+</span></span><span style="display:flex;"><span>features_df<span style="color:#f92672">.</span>columns <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Product_Color&#34;</span>, <span style="color:#e6db74">&#34;Product_Category&#34;</span>, <span style="color:#e6db74">&#34;Product_Company&#34;</span>, <span style="color:#e6db74">&#34;Product_Details&#34;</span>, <span style="color:#e6db74">&#34;Product_Gender&#34;</span>, <span style="color:#e6db74">&#34;Product_AgeGroup&#34;</span>
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>final_df <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>concat([final_df, features_df], axis<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span></code></pre></div><p>Some entries didn’t have gender mentioned, even though they were obvious (like &ldquo;Black Shirt&rdquo; being for men—since I know they only stock that for men). So I filled in missing gender and age group fields based on known product categories.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Here i am assigning all the T-Shirt to Male gender even though there are Ladies T-Shirt but still since there are alot of Male customer than Ladies customer. So having one to two error won&#39;t impact the overall analysis.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># check below why i am able to say there are more mens customer than ladies customer</span>
+</span></span><span style="display:flex;"><span>male_categories <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;T-Shirt&#34;</span>, <span style="color:#e6db74">&#34;Shirt&#34;</span>, <span style="color:#e6db74">&#34;Track Pant&#34;</span>, <span style="color:#e6db74">&#34;Half Pant&#34;</span>, <span style="color:#e6db74">&#34;Pant&#34;</span>, <span style="color:#e6db74">&#34;Jeans&#34;</span>, <span style="color:#e6db74">&#34;Lungi&#34;</span>]
+</span></span><span style="display:flex;"><span>final_df<span style="color:#f92672">.</span>loc[
+</span></span><span style="display:flex;"><span>    (final_df[<span style="color:#e6db74">&#34;Product_Category&#34;</span>]<span style="color:#f92672">.</span>isin(male_categories)) <span style="color:#f92672">&amp;</span>
+</span></span><span style="display:flex;"><span>    (final_df[<span style="color:#e6db74">&#34;Product_Gender&#34;</span>]<span style="color:#f92672">.</span>isna()), <span style="color:#e6db74">&#34;Product_Gender&#34;</span>
+</span></span><span style="display:flex;"><span>] <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Male&#34;</span>
+</span></span><span style="display:flex;"><span>final_df<span style="color:#f92672">.</span>loc[
+</span></span><span style="display:flex;"><span>    (final_df[<span style="color:#e6db74">&#34;Product_Category&#34;</span>]<span style="color:#f92672">.</span>isin(male_categories)) <span style="color:#f92672">&amp;</span>
+</span></span><span style="display:flex;"><span>    (final_df[<span style="color:#e6db74">&#34;Product_AgeGroup&#34;</span>]<span style="color:#f92672">.</span>isna()), <span style="color:#e6db74">&#34;Product_AgeGroup&#34;</span>
+</span></span><span style="display:flex;"><span>] <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Mens&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>female_categories <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Leggings&#34;</span>, <span style="color:#e6db74">&#34;Petticoat&#34;</span>, <span style="color:#e6db74">&#34;Blouse&#34;</span>, <span style="color:#e6db74">&#34;Saree&#34;</span>]
+</span></span><span style="display:flex;"><span>final_df<span style="color:#f92672">.</span>loc[
+</span></span><span style="display:flex;"><span>    (final_df[<span style="color:#e6db74">&#34;Product_Category&#34;</span>]<span style="color:#f92672">.</span>isin(female_categories)) <span style="color:#f92672">&amp;</span>
+</span></span><span style="display:flex;"><span>    (final_df[<span style="color:#e6db74">&#34;Product_Gender&#34;</span>]<span style="color:#f92672">.</span>isna()), <span style="color:#e6db74">&#34;Product_Gender&#34;</span>
+</span></span><span style="display:flex;"><span>] <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Female&#34;</span>
+</span></span><span style="display:flex;"><span>final_df<span style="color:#f92672">.</span>loc[
+</span></span><span style="display:flex;"><span>    (final_df[<span style="color:#e6db74">&#34;Product_Category&#34;</span>]<span style="color:#f92672">.</span>isin(female_categories)) <span style="color:#f92672">&amp;</span>
+</span></span><span style="display:flex;"><span>    (final_df[<span style="color:#e6db74">&#34;Product_AgeGroup&#34;</span>]<span style="color:#f92672">.</span>isna()), <span style="color:#e6db74">&#34;Product_AgeGroup&#34;</span>
+</span></span><span style="display:flex;"><span>] <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Ladies&#34;</span>
+</span></span></code></pre></div><p>Finally, I created two more useful fields:</p>
+<ul>
+<li><code>TotalPrice</code>: quantity × unit price</li>
+<li><code>Product_CD</code>: a combination of company name and remaining product details (useful for grouping)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>temp_df <span style="color:#f92672">=</span> final_df[[<span style="color:#e6db74">&#34;Product_Company&#34;</span>, <span style="color:#e6db74">&#34;Product_Details&#34;</span>]]<span style="color:#f92672">.</span>fillna(<span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>temp_df <span style="color:#f92672">=</span> temp_df[<span style="color:#e6db74">&#34;Product_Company&#34;</span>] <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; &#34;</span> <span style="color:#f92672">+</span> temp_df[<span style="color:#e6db74">&#34;Product_Details&#34;</span>]
+</span></span><span style="display:flex;"><span>final_df[<span style="color:#e6db74">&#34;Product_CD&#34;</span>] <span style="color:#f92672">=</span> temp_df<span style="color:#f92672">.</span>str<span style="color:#f92672">.</span>strip()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>final_df[<span style="color:#e6db74">&#34;TotalPrice&#34;</span>] <span style="color:#f92672">=</span> final_df[<span style="color:#e6db74">&#34;Quantity&#34;</span>] <span style="color:#f92672">*</span> final_df[<span style="color:#e6db74">&#34;UnitPrice&#34;</span>]
+</span></span><span style="display:flex;"><span>final_df <span style="color:#f92672">=</span> final_df<span style="color:#f92672">.</span>sort_values(by<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>)
+</span></span></code></pre></div><p>This cleaned and enriched dataset gave me a solid base for further analysis.</p>
+<h2 id="revenue-analysis">Revenue Analysis</h2>
+<p>After completing the data cleaning, I moved on to the actual analysis. I followed a structured framework I learned during the Tata Virtual Internship by Forage: <strong>start by asking a question, then use data to answer it.</strong></p>
+<p>Since my focus is on <strong>improving the revenue</strong> of the shop, my first question is:</p>
+<blockquote>
+<p><strong>What does the shop’s current revenue generation look like?</strong></p></blockquote>
+<h3 id="1-daily-revenue-trends">1. Daily Revenue Trends</h3>
+<p>To answer this, I first plotted the <strong>revenue per day</strong>, coloring each week differently to identify weekly patterns.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># daily revenue plot with each week coloured to identify pattern</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>dailyrev <span style="color:#f92672">=</span> final_df<span style="color:#f92672">.</span>groupby(final_df[<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>date)<span style="color:#f92672">.</span>agg(
+</span></span><span style="display:flex;"><span>    TotalRevenue<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#34;TotalPrice&#34;</span>, <span style="color:#e6db74">&#34;sum&#34;</span>),
+</span></span><span style="display:flex;"><span>    TotalQuantity<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#34;Quantity&#34;</span>, <span style="color:#e6db74">&#34;sum&#34;</span>),
+</span></span><span style="display:flex;"><span>    WeekNum<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>, <span style="color:#66d9ef">lambda</span> x: x<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>isocalendar()<span style="color:#f92672">.</span>week<span style="color:#f92672">.</span>iloc[<span style="color:#ae81ff">0</span>])
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>dailyrev <span style="color:#f92672">=</span> dailyrev<span style="color:#f92672">.</span>reset_index()
+</span></span><span style="display:flex;"><span>dailyrev[<span style="color:#e6db74">&#34;DayName&#34;</span>] <span style="color:#f92672">=</span> dailyrev[<span style="color:#e6db74">&#39;PaymentDateTime&#39;</span>]<span style="color:#f92672">.</span>apply(<span style="color:#66d9ef">lambda</span> x: x<span style="color:#f92672">.</span>strftime(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">%a</span><span style="color:#e6db74">&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>colors <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;red&#39;</span>, <span style="color:#e6db74">&#39;blue&#39;</span>, <span style="color:#e6db74">&#39;green&#39;</span>, <span style="color:#e6db74">&#39;orange&#39;</span>, <span style="color:#e6db74">&#39;purple&#39;</span>, <span style="color:#e6db74">&#39;cyan&#39;</span>, <span style="color:#e6db74">&#39;magenta&#39;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Plot the line</span>
+</span></span><span style="display:flex;"><span>fig, ax <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>subplots(figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">6</span>))
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>plot(dailyrev[<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>], dailyrev[<span style="color:#e6db74">&#34;TotalRevenue&#34;</span>], color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;black&#34;</span>,
+</span></span><span style="display:flex;"><span>        marker<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;X&#34;</span>, mfc<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;red&#34;</span>, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Daily Revenue&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> _, row <span style="color:#f92672">in</span> dailyrev<span style="color:#f92672">.</span>iterrows():
+</span></span><span style="display:flex;"><span>    plt<span style="color:#f92672">.</span>text(row[<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>], row[<span style="color:#e6db74">&#34;TotalRevenue&#34;</span>] <span style="color:#f92672">+</span> <span style="color:#ae81ff">500</span>, s<span style="color:#f92672">=</span>row[<span style="color:#e6db74">&#34;DayName&#34;</span>])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i, (week, group) <span style="color:#f92672">in</span> enumerate(dailyrev<span style="color:#f92672">.</span>groupby(<span style="color:#e6db74">&#34;WeekNum&#34;</span>)):
+</span></span><span style="display:flex;"><span>    start_date <span style="color:#f92672">=</span> group[<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>]<span style="color:#f92672">.</span>min()
+</span></span><span style="display:flex;"><span>    end_date <span style="color:#f92672">=</span> group[<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>]<span style="color:#f92672">.</span>max()
+</span></span><span style="display:flex;"><span>    ax<span style="color:#f92672">.</span>axvspan(start_date, end_date, color<span style="color:#f92672">=</span>colors[i <span style="color:#f92672">%</span> len(colors)], alpha<span style="color:#f92672">=</span><span style="color:#ae81ff">0.2</span>, label<span style="color:#f92672">=</span><span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Week </span><span style="color:#e6db74">{</span>week<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Optional: improve formatting</span>
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>xaxis<span style="color:#f92672">.</span>set_major_locator(mdates<span style="color:#f92672">.</span>WeekdayLocator())
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>xaxis<span style="color:#f92672">.</span>set_major_formatter(mdates<span style="color:#f92672">.</span>DateFormatter(<span style="color:#e6db74">&#39;</span><span style="color:#e6db74">%d</span><span style="color:#e6db74"> %b %y&#39;</span>))
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xticks(rotation<span style="color:#f92672">=</span><span style="color:#ae81ff">45</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#34;Revenue&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#34;Daily Revenue with Weekly Colored Regions&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/dailyrev.png" alt="Daily Revenue Plot"></p>
+<p>To better understand the shop&rsquo;s sales cycle, I shaded different weeks in the plot. This helps highlight a key insight: <strong>Sundays consistently show a spike in revenue</strong>, especially in the first three weeks. This aligns with what I know about the shop—Sundays attract more customers, including many construction workers and daily-wage laborers.</p>
+<p>However, this Sunday spike seems to taper off over time.</p>
+<h3 id="2-weekly-revenue-comparison">2. Weekly Revenue Comparison</h3>
+<p>Next, I looked at total revenue generated <strong>per week</strong> to get a broader sense of performance.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>dailyrev<span style="color:#f92672">.</span>groupby(<span style="color:#e6db74">&#34;WeekNum&#34;</span>)[<span style="color:#e6db74">&#34;TotalRevenue&#34;</span>]<span style="color:#f92672">.</span>sum()<span style="color:#f92672">.</span>plot(kind<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;bar&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>grid(axis<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;y&#34;</span>, alpha<span style="color:#f92672">=</span><span style="color:#ae81ff">0.5</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#34;Weekly Revenue&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#34;Weeks&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#34;Revenue&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/weeklyrev.png" alt="Weekly Revenue"></p>
+<p>On average, the shop makes around <strong>₹25,000 per week</strong>. The first week&rsquo;s revenue is significantly higher, and there’s a clear reason: that Sunday was just before the <strong>end of Ramadan (31st March)</strong>, which drove a surge in customer purchases.</p>
+<h2 id="day-wise-revenue--quantity-analysis">Day-wise Revenue &amp; Quantity Analysis</h2>
+<p>Since we&rsquo;ve already seen that <strong>sales depend heavily on the day of the week</strong>, the next logical question is:</p>
+<blockquote>
+<p><strong>Which days drive the highest revenue and quantity sold?</strong></p></blockquote>
+<h3 id="1-revenue-distribution-by-day-of-the-week">1. Revenue Distribution by Day of the Week</h3>
+<p>To answer this, I grouped the dataset by transaction date and extracted daily total revenue, quantity sold, and invoice count. Then, I plotted the revenue distribution using a boxplot:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>weekrev <span style="color:#f92672">=</span> final_df<span style="color:#f92672">.</span>groupby(final_df[<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>date)<span style="color:#f92672">.</span>agg(
+</span></span><span style="display:flex;"><span>    TotalRevenue<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#34;TotalPrice&#34;</span>, <span style="color:#e6db74">&#34;sum&#34;</span>),
+</span></span><span style="display:flex;"><span>    TotalQuantity<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#34;Quantity&#34;</span>, <span style="color:#e6db74">&#34;sum&#34;</span>),
+</span></span><span style="display:flex;"><span>    TotalInvoices<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#34;InvoiceNo&#34;</span>, <span style="color:#e6db74">&#34;nunique&#34;</span>),
+</span></span><span style="display:flex;"><span>    WeekNum<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>, <span style="color:#66d9ef">lambda</span> x: x<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>isocalendar()<span style="color:#f92672">.</span>week<span style="color:#f92672">.</span>iloc[<span style="color:#ae81ff">0</span>])
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>weekrev <span style="color:#f92672">=</span> weekrev<span style="color:#f92672">.</span>reset_index()
+</span></span><span style="display:flex;"><span>weekrev[<span style="color:#e6db74">&#34;DayName&#34;</span>] <span style="color:#f92672">=</span> weekrev[<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>]<span style="color:#f92672">.</span>apply(<span style="color:#66d9ef">lambda</span> x: x<span style="color:#f92672">.</span>strftime(<span style="color:#e6db74">&#34;%A&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Ensure DayName is ordered correctly</span>
+</span></span><span style="display:flex;"><span>days_order <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;Monday&#39;</span>, <span style="color:#e6db74">&#39;Tuesday&#39;</span>, <span style="color:#e6db74">&#39;Wednesday&#39;</span>, <span style="color:#e6db74">&#39;Thursday&#39;</span>, <span style="color:#e6db74">&#39;Friday&#39;</span>, <span style="color:#e6db74">&#39;Saturday&#39;</span>, <span style="color:#e6db74">&#39;Sunday&#39;</span>]
+</span></span><span style="display:flex;"><span>weekrev[<span style="color:#e6db74">&#39;DayName&#39;</span>] <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>Categorical(weekrev[<span style="color:#e6db74">&#39;DayName&#39;</span>], categories<span style="color:#f92672">=</span>days_order, ordered<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Plot boxplot</span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>figure(figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">6</span>))
+</span></span><span style="display:flex;"><span>sns<span style="color:#f92672">.</span>boxplot(data<span style="color:#f92672">=</span>weekrev, x<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;DayName&#39;</span>, y<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;TotalRevenue&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#34;Boxplot with Quartile and Whisker Labels&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#34;Total Revenue per Day&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#34;Day of the Week&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>grid(<span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/dayrevboxplot.png" alt="Box Plot to see Day Revenue Distribution"></p>
+<p><strong>Key Observations:</strong></p>
+<ul>
+<li><strong>Thursday</strong> stands out with a relatively <strong>high median revenue</strong> and tightly clustered distribution. This implies that <strong>Thursday consistently sees higher sales</strong>.</li>
+<li>This insight can be leveraged for revenue optimisation: on high footfall days like Thursday, the shop could focus on <strong>up selling</strong> or <strong>cross-selling</strong>—encouraging customers to buy additional or complementary items.</li>
+<li><strong>Monday</strong>, in contrast, shows lower and more stable sales. This makes it a good day for non-customer-facing activities like <strong>inventory stocking</strong>, <strong>staff training</strong>, or <strong>store maintenance</strong>, possibly requiring only one shopkeeper.</li>
+</ul>
+<blockquote>
+<p>Future TODO <a href="#ref-1">[^1]</a> <strong>Analyse which products are driving sales on each day</strong>, especially on high-volume days like Thursday. This will help in targeted stocking strategies.</p></blockquote>
+<h3 id="2-is-revenue-correlated-with-quantity-sold">2. Is Revenue Correlated with Quantity Sold?</h3>
+<p>To test this, I calculated the Pearson correlation between <strong>daily total quantity sold</strong> and <strong>daily revenue</strong>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>dailyrev[[<span style="color:#e6db74">&#34;TotalRevenue&#34;</span>, <span style="color:#e6db74">&#34;TotalQuantity&#34;</span>]]<span style="color:#f92672">.</span>corr()
+</span></span></code></pre></div><p><strong>Correlation Coefficient: <code>0.94099</code></strong></p>
+<p>This shows a <strong>very strong positive correlation</strong>, indicating that <strong>selling more items generally leads to higher revenue</strong>, which intuitively makes sense for a retail shop with relatively uniform pricing.</p>
+<h3 id="3-quantity-distribution-by-day-of-the-week">3. Quantity Distribution by Day of the Week</h3>
+<p>I also created a boxplot to understand the variation in <strong>quantity sold per day</strong>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>figure(figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">6</span>))
+</span></span><span style="display:flex;"><span>sns<span style="color:#f92672">.</span>boxplot(data<span style="color:#f92672">=</span>weekrev, x<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;DayName&#39;</span>, y<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;TotalQuantity&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#34;Day-wise Quantity Distribution&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#34;Total Quantity per Day&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#34;Day of the Week&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>grid(<span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/dayqtyboxplot.png" alt="Quantity Distribution Day Wise"></p>
+<p><strong>Additional Insight</strong>:</p>
+<ul>
+<li><strong>Saturday</strong> sees <strong>higher quantity sold</strong>, second only to Sunday. However, this doesn’t translate to high revenue.</li>
+<li>This suggests that on Saturdays, <strong>cheaper items</strong> (like underwear or basic tees) are being sold more, while <strong>higher-value items</strong> (like jeans or shirts) might be less in demand.</li>
+<li>This gives rise to another follow-up: Which <strong>product categories</strong> are dominant on different days?</li>
+</ul>
+<h3 id="note-on-data-period">Note on Data Period</h3>
+<p>This analysis is based on the current limited time window of sales data. While it gives directional insights, <strong>the patterns may shift with time or events</strong>, such as festivals or holidays. For example, we observed Sunday sales declining over the 3-week period.</p>
+<p>As more data is collected, especially across <strong>multiple months and seasons</strong>, we’ll be able to draw stronger, more generalizable conclusions.</p>
+<h2 id="q2-what-is-the-customer-arrival-time-distribution">Q2: What is the Customer Arrival Time Distribution?</h2>
+<p>Understanding when customers typically visit is critical for:</p>
+<ul>
+<li><strong>Staffing</strong>: Ensuring sufficient shopkeepers are present during peak hours.</li>
+<li><strong>Planning Promotions</strong>: Timing offers when customer traffic is high.</li>
+<li><strong>Operational Efficiency</strong>: Performing low-priority tasks during low-traffic hours.</li>
+</ul>
+<h3 id="1-overall-time-of-day-distribution">1. Overall Time-of-Day Distribution</h3>
+<p>To start, I plotted a histogram of all transaction hours across all days:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># AM/PM labels for 24-hour time</span>
+</span></span><span style="display:flex;"><span>am_pm_labels <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;12 AM&#39;</span>, <span style="color:#e6db74">&#39;1 AM&#39;</span>, <span style="color:#e6db74">&#39;2 AM&#39;</span>, <span style="color:#e6db74">&#39;3 AM&#39;</span>, <span style="color:#e6db74">&#39;4 AM&#39;</span>, <span style="color:#e6db74">&#39;5 AM&#39;</span>, <span style="color:#e6db74">&#39;6 AM&#39;</span>, <span style="color:#e6db74">&#39;7 AM&#39;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;8 AM&#39;</span>, <span style="color:#e6db74">&#39;9 AM&#39;</span>, <span style="color:#e6db74">&#39;10 AM&#39;</span>, <span style="color:#e6db74">&#39;11 AM&#39;</span>, <span style="color:#e6db74">&#39;12 PM&#39;</span>, <span style="color:#e6db74">&#39;1 PM&#39;</span>, <span style="color:#e6db74">&#39;2 PM&#39;</span>, <span style="color:#e6db74">&#39;3 PM&#39;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;4 PM&#39;</span>, <span style="color:#e6db74">&#39;5 PM&#39;</span>, <span style="color:#e6db74">&#39;6 PM&#39;</span>, <span style="color:#e6db74">&#39;7 PM&#39;</span>, <span style="color:#e6db74">&#39;8 PM&#39;</span>, <span style="color:#e6db74">&#39;9 PM&#39;</span>, <span style="color:#e6db74">&#39;10 PM&#39;</span>, <span style="color:#e6db74">&#39;11 PM&#39;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>figure(figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">6</span>))
+</span></span><span style="display:flex;"><span>sns<span style="color:#f92672">.</span>histplot(final_df[<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>hour, bins<span style="color:#f92672">=</span><span style="color:#ae81ff">24</span>, kde<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Set ticks and labels</span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xticks(ticks<span style="color:#f92672">=</span>range(<span style="color:#ae81ff">24</span>), labels<span style="color:#f92672">=</span>am_pm_labels, rotation<span style="color:#f92672">=</span><span style="color:#ae81ff">45</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#34;Time of Day&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#34;Frequency&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#34;Histogram of Transactions by Hour (AM/PM)&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>grid(<span style="color:#66d9ef">True</span>, linestyle<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;--&#39;</span>, alpha<span style="color:#f92672">=</span><span style="color:#ae81ff">0.4</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/histtrxoverall.png" alt="Overall Histogram of Time Distribution"></p>
+<p><strong>Key Insights</strong>:</p>
+<ul>
+<li><strong>6 PM to 9 PM</strong> is the <strong>peak customer arrival window</strong>.</li>
+<li>There&rsquo;s also a <strong>secondary spike in the morning</strong>, possibly from early-rising workers or locals shopping before work.</li>
+</ul>
+<blockquote>
+<p>Future TODO <a href="#ref-2">[^2]</a> Analyse <strong>which products are purchased during different times</strong>—e.g., cheap necessities in the morning vs. bigger purchases in the evening.</p></blockquote>
+<h3 id="2-time-of-day-distribution-by-day-of-week">2. Time-of-Day Distribution by Day of Week</h3>
+<p>To improve granularity, I added <strong>day of week</strong> as another dimension and used FacetGrid to plot separate hourly histograms:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># let&#39;s look at distribution of customer with respect to time and day</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>daywise_df <span style="color:#f92672">=</span> final_df<span style="color:#f92672">.</span>copy()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>days_order <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;Monday&#39;</span>, <span style="color:#e6db74">&#39;Tuesday&#39;</span>, <span style="color:#e6db74">&#39;Wednesday&#39;</span>, <span style="color:#e6db74">&#39;Thursday&#39;</span>, <span style="color:#e6db74">&#39;Friday&#39;</span>, <span style="color:#e6db74">&#39;Saturday&#39;</span>, <span style="color:#e6db74">&#39;Sunday&#39;</span>]
+</span></span><span style="display:flex;"><span>daywise_df[<span style="color:#e6db74">&#34;DayName&#34;</span>] <span style="color:#f92672">=</span> daywise_df[<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>]<span style="color:#f92672">.</span>apply(<span style="color:#66d9ef">lambda</span> x: x<span style="color:#f92672">.</span>strftime(<span style="color:#e6db74">&#34;%A&#34;</span>))
+</span></span><span style="display:flex;"><span>daywise_df[<span style="color:#e6db74">&#34;DayName&#34;</span>] <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>Categorical(daywise_df[<span style="color:#e6db74">&#39;DayName&#39;</span>], categories<span style="color:#f92672">=</span>days_order, ordered<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>daywise_df[<span style="color:#e6db74">&#39;Hour&#39;</span>] <span style="color:#f92672">=</span> daywise_df[<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>hour
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># FacetGrid for 7 days, assuming df has &#39;day&#39; and &#39;time&#39; columns</span>
+</span></span><span style="display:flex;"><span>g <span style="color:#f92672">=</span> sns<span style="color:#f92672">.</span>FacetGrid(daywise_df, col<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;DayName&#34;</span>, col_wrap<span style="color:#f92672">=</span><span style="color:#ae81ff">4</span>, sharex<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, sharey<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>g<span style="color:#f92672">.</span>map(sns<span style="color:#f92672">.</span>histplot, <span style="color:#e6db74">&#34;Hour&#34;</span>, bins<span style="color:#f92672">=</span><span style="color:#ae81ff">24</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Customize all axes</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> ax <span style="color:#f92672">in</span> g<span style="color:#f92672">.</span>axes<span style="color:#f92672">.</span>flatten():
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Hide y-ticks</span>
+</span></span><span style="display:flex;"><span>    ax<span style="color:#f92672">.</span>set_yticks([])
+</span></span><span style="display:flex;"><span>    ax<span style="color:#f92672">.</span>set_ylabel(<span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Format x-ticks in AM/PM</span>
+</span></span><span style="display:flex;"><span>    ax<span style="color:#f92672">.</span>xaxis<span style="color:#f92672">.</span>set_major_locator(ticker<span style="color:#f92672">.</span>MultipleLocator(<span style="color:#ae81ff">1</span>))
+</span></span><span style="display:flex;"><span>    ax<span style="color:#f92672">.</span>xaxis<span style="color:#f92672">.</span>set_major_formatter(ticker<span style="color:#f92672">.</span>FuncFormatter(<span style="color:#66d9ef">lambda</span> x, _: <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>int(x)<span style="color:#f92672">%</span><span style="color:#ae81ff">12</span> <span style="color:#f92672">or</span> <span style="color:#ae81ff">12</span><span style="color:#e6db74">}{</span><span style="color:#e6db74">&#39;AM&#39;</span> <span style="color:#66d9ef">if</span> x <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">12</span> <span style="color:#66d9ef">else</span> <span style="color:#e6db74">&#39;PM&#39;</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># **Force showing x-tick labels even if not bottom row**</span>
+</span></span><span style="display:flex;"><span>    ax<span style="color:#f92672">.</span>tick_params(axis<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;x&#39;</span>, which<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;both&#39;</span>, labelbottom<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, labelrotation<span style="color:#f92672">=</span><span style="color:#ae81ff">45</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Clean up titles and labels</span>
+</span></span><span style="display:flex;"><span>g<span style="color:#f92672">.</span>set_titles(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{col_name}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>g<span style="color:#f92672">.</span>set_axis_labels(<span style="color:#e6db74">&#34;&#34;</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>subplots_adjust(hspace<span style="color:#f92672">=</span><span style="color:#ae81ff">0.4</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/histtrxday.png" alt="Histogram of Time Distribution by Each Day"></p>
+<p><strong>Observations</strong>:</p>
+<ul>
+<li><strong>Evening peaks are consistent across most days</strong>, especially Thursday to Sunday.</li>
+<li><strong>Some days (e.g., Monday)</strong> show <strong>flatter distributions</strong>, reinforcing earlier findings of low sales and low footfall.</li>
+<li>This allows <strong>dynamic staffing</strong>: assign more staff during evening peaks and fewer during slower mid-afternoon hours.</li>
+</ul>
+<h3 id="3-whats-next">3. What&rsquo;s Next?</h3>
+<p>So far, we&rsquo;ve looked at:</p>
+<ul>
+<li><strong>Overall hourly trends</strong> (global insight)</li>
+<li><strong>Day-specific hourly trends</strong> (granular operational insight)</li>
+</ul>
+<p>But you’ve rightly noted: <em>these still don’t account for external temporal factors</em>—like festivals, events, or economic cycles. For example, a pattern observed during <strong>Ramadan</strong> may not hold at other times.</p>
+<blockquote>
+<p>Future TODO <a href="#ref-3">[^3]</a> Segment the data by <strong>time periods or seasons</strong> (e.g., pre/post festival, salary week vs. non-salary week), and redo time-of-day analysis. This will help capture <strong>context-aware customer behaviour</strong>.</p></blockquote>
+<h2 id="product-category-analysis">Product Category Analysis</h2>
+<h3 id="understanding-how-revenue-is-generated-in-this-offline-retail-store">Understanding How Revenue Is Generated in This Offline Retail Store</h3>
+<p>Before diving into product analysis, it’s important to understand how revenue is generated in this shop. This understanding will help us frame relevant questions for future analysis.</p>
+<p>This shop does not engage in any form of marketing. It operates entirely on a <strong>demand-response model</strong>—customers arrive at the shop when they have a need, and sales happen if their demand is fulfilled. Therefore, the only reliable ways to increase revenue are:</p>
+<ul>
+<li>By increasing the number of items sold (quantity), or</li>
+<li>By better meeting customer demand so that customers do not leave the store without purchasing anything.</li>
+</ul>
+<p>Customer demand includes not only the type of product but also whether the product is available within their desired price range.</p>
+<h3 id="revenue-distribution-by-product-category-and-gender">Revenue Distribution by Product Category and Gender</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>temp_df <span style="color:#f92672">=</span> final_df<span style="color:#f92672">.</span>copy()
+</span></span><span style="display:flex;"><span>temp_df[<span style="color:#e6db74">&#34;Product_Gender&#34;</span>] <span style="color:#f92672">=</span> temp_df[<span style="color:#e6db74">&#34;Product_Gender&#34;</span>]<span style="color:#f92672">.</span>fillna(<span style="color:#e6db74">&#34;Neutral&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>pivot_df <span style="color:#f92672">=</span> temp_df<span style="color:#f92672">.</span>pivot_table(
+</span></span><span style="display:flex;"><span>    index<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Product_Category&#39;</span>,
+</span></span><span style="display:flex;"><span>    columns<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Product_Gender&#39;</span>,
+</span></span><span style="display:flex;"><span>    values<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;TotalPrice&#39;</span>,
+</span></span><span style="display:flex;"><span>    aggfunc<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;sum&#39;</span>,
+</span></span><span style="display:flex;"><span>    fill_value<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Calculate total revenue and sort</span>
+</span></span><span style="display:flex;"><span>pivot_df[<span style="color:#e6db74">&#39;Total_Revenue&#39;</span>] <span style="color:#f92672">=</span> pivot_df<span style="color:#f92672">.</span>sum(axis<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>pivot_df <span style="color:#f92672">=</span> pivot_df<span style="color:#f92672">.</span>sort_values(by<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Total_Revenue&#39;</span>, ascending<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>pivot_df <span style="color:#f92672">=</span> pivot_df<span style="color:#f92672">.</span>drop(columns<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Total_Revenue&#39;</span>)  <span style="color:#75715e"># Remove helper column for clean plot</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ax <span style="color:#f92672">=</span> pivot_df<span style="color:#f92672">.</span>plot(kind<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;bar&#39;</span>, stacked<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">14</span>, <span style="color:#ae81ff">6</span>), width<span style="color:#f92672">=</span><span style="color:#ae81ff">0.8</span>, colormap<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Set2&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#39;Revenue by Product Category and Gender&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#39;Product Category&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#39;Revenue&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>legend(title<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Product Gender&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xticks(rotation<span style="color:#f92672">=</span><span style="color:#ae81ff">90</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>grid(axis<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;y&#34;</span>, alpha<span style="color:#f92672">=</span><span style="color:#ae81ff">0.3</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/productrev.png" alt="Revenue Distribution Across Product Categories"></p>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>The &ldquo;Neutral&rdquo; gender label means either the product can be used by both genders or the gender information was missing (e.g., in some entries for socks).</li>
+<li>From the chart, we can see that the majority of revenue comes from <strong>male-oriented products</strong>.</li>
+<li><strong>Underwear</strong> stands out as the top revenue-contributing category.</li>
+</ul>
+<h3 id="quantity-sold-by-product-category-and-gender">Quantity Sold by Product Category and Gender</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>pivot_df <span style="color:#f92672">=</span> temp_df<span style="color:#f92672">.</span>pivot_table(
+</span></span><span style="display:flex;"><span>    index<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Product_Category&#39;</span>,
+</span></span><span style="display:flex;"><span>    columns<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Product_Gender&#39;</span>,
+</span></span><span style="display:flex;"><span>    values<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Quantity&#39;</span>,
+</span></span><span style="display:flex;"><span>    aggfunc<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;sum&#39;</span>,
+</span></span><span style="display:flex;"><span>    fill_value<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>pivot_df[<span style="color:#e6db74">&#39;Quantity&#39;</span>] <span style="color:#f92672">=</span> pivot_df<span style="color:#f92672">.</span>sum(axis<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>pivot_df <span style="color:#f92672">=</span> pivot_df<span style="color:#f92672">.</span>sort_values(by<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Quantity&#39;</span>, ascending<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>pivot_df <span style="color:#f92672">=</span> pivot_df<span style="color:#f92672">.</span>drop(columns<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Quantity&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>pivot_df<span style="color:#f92672">.</span>plot(kind<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;bar&#39;</span>, stacked<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">14</span>, <span style="color:#ae81ff">6</span>), width<span style="color:#f92672">=</span><span style="color:#ae81ff">0.8</span>, colormap<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Set2&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#39;Quantity by Product Category and Gender&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#39;Product Category&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#39;Quantity&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>legend(title<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Product Gender&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xticks(rotation<span style="color:#f92672">=</span><span style="color:#ae81ff">90</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>grid(axis<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;y&#34;</span>, alpha<span style="color:#f92672">=</span><span style="color:#ae81ff">0.3</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/productqty.png" alt="Quantity Distribution across Product Categories"></p>
+<p>From the above chart, <strong>vests</strong> are sold in the highest quantity, but they generate less revenue compared to <strong>t-shirts</strong> and <strong>shirts</strong> due to their lower unit prices.</p>
+<p>Conversely, <strong>underwear</strong> not only sells in large quantities but also contributes significantly to revenue, making it a core category. Even though t-shirts and shirts have higher unit prices, their lower quantity sold limits their revenue impact.</p>
+<p>This highlights a key insight:<br>
+<strong>Total Revenue = Unit Price × Quantity</strong><br>
+A category like underwear performs well because of a balanced combination of <strong>high sales volume</strong> and <strong>reasonable unit price</strong>.</p>
+<h3 id="temporal-distribution-of-product-sales">Temporal Distribution of Product Sales</h3>
+<p>Now let’s explore how product sales vary over time. Specifically, we want to know which products are sold <strong>consistently</strong> and which are sold <strong>sporadically</strong>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>category_df <span style="color:#f92672">=</span> final_df<span style="color:#f92672">.</span>groupby([final_df[<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>date, <span style="color:#e6db74">&#34;Product_Category&#34;</span>])[<span style="color:#e6db74">&#34;Quantity&#34;</span>]<span style="color:#f92672">.</span>sum()<span style="color:#f92672">.</span>unstack()<span style="color:#f92672">.</span>fillna(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Sort products by total demand (sum across all dates)</span>
+</span></span><span style="display:flex;"><span>sorted_products <span style="color:#f92672">=</span> category_df<span style="color:#f92672">.</span>sum()<span style="color:#f92672">.</span>sort_values(ascending<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)<span style="color:#f92672">.</span>index
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Sort dates chronologically</span>
+</span></span><span style="display:flex;"><span>sorted_dates <span style="color:#f92672">=</span> category_df<span style="color:#f92672">.</span>sort_index()<span style="color:#f92672">.</span>index
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Create sorted heatmap</span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>figure(figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">8</span>))
+</span></span><span style="display:flex;"><span>sns<span style="color:#f92672">.</span>heatmap(category_df<span style="color:#f92672">.</span>loc[sorted_dates, sorted_products]<span style="color:#f92672">.</span>T,  <span style="color:#75715e"># Transpose and sort</span>
+</span></span><span style="display:flex;"><span>            cmap<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;mako&#39;</span>,
+</span></span><span style="display:flex;"><span>            annot<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>,
+</span></span><span style="display:flex;"><span>            cbar_kws<span style="color:#f92672">=</span>{<span style="color:#e6db74">&#39;label&#39;</span>: <span style="color:#e6db74">&#39;Quantity Sold&#39;</span>})
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#39;Product Demand Heatmap (Sorted by Quantity Sold)&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#39;Date&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#39;Product Category&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xticks(rotation<span style="color:#f92672">=</span><span style="color:#ae81ff">45</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/producttimeqty.png" alt="Product Categories Number of Quantity Sold Each Date"></p>
+<p>This heatmap gives us a deeper understanding of product demand patterns over time.</p>
+<ul>
+<li>Products like <strong>underwear</strong> and <strong>vests</strong> appear consistently across many dates, indicating <strong>steady and reliable demand</strong>.</li>
+<li>Other products appear less frequently, suggesting <strong>intermittent demand</strong>, possibly driven by trends or seasons.</li>
+</ul>
+<h3 id="key-insight">Key Insight</h3>
+<p>The only way to grow revenue in this kind of retail environment is by <strong>consistently meeting customer demand</strong>. This includes:</p>
+<ul>
+<li>Stocking <strong>high-demand products</strong> in sufficient quantity,</li>
+<li>Ensuring availability of <strong>products at different price points</strong>, and</li>
+<li>Using past purchase patterns to <strong>anticipate and prepare for future demand</strong>.</li>
+</ul>
+<p>Without proactive marketing or outreach, every missed opportunity to meet demand is a <strong>missed sale</strong>. Thus, the shop’s ability to stock appropriately, based on patterns like those shown above, directly impacts its revenue performance.</p>
+<h2 id="analysis-of-individual-product-categories--challenges-and-learnings">Analysis of Individual Product Categories – Challenges and Learnings</h2>
+<p>Now we move to our fourth question: analysing each product category in terms of <strong>demand</strong> (i.e., quantity sold), <strong>revenue generated</strong>, and how these metrics vary across <strong>sizes</strong> and <strong>dates</strong>.</p>
+<h3 id="the-problem-i-discovered-midway">The Problem I Discovered Midway</h3>
+<p>While working on this, I realised I had made a <strong>serious mistake during the data collection phase</strong>. Consider the example below:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>temp_df <span style="color:#f92672">=</span> final_df[final_df[<span style="color:#e6db74">&#34;Product_Category&#34;</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;Half Pant&#34;</span>]
+</span></span><span style="display:flex;"><span>print(temp_df[temp_df<span style="color:#f92672">.</span>duplicated(subset<span style="color:#f92672">=</span>[<span style="color:#e6db74">&#34;Product_Category&#34;</span>, <span style="color:#e6db74">&#34;UnitPrice&#34;</span>])][[<span style="color:#e6db74">&#34;Description&#34;</span>, <span style="color:#e6db74">&#34;UnitPrice&#34;</span>]]<span style="color:#f92672">.</span>sort_values(by<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;UnitPrice&#34;</span>, ascending<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)<span style="color:#f92672">.</span>to_string(index<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>))
+</span></span></code></pre></div><p>Sample Output:</p>
+<pre tabindex="0"><code>                   Description  UnitPrice
+Hosiery Bermuda Mens Half Pant        340
+                     Half Pant        300
+                     Half Pant        250
+               Child Half Pant        250
+               Boxer Half Pant        250
+               Boxer Half Pant        200
+        Boxer Cotton Half Pant        200
+        Boxer Cotton Half Pant        180
+</code></pre><p>Although these descriptions seem to differentiate the products, they are misleading. For instance:</p>
+<ul>
+<li><code>Half Pant</code> at ₹250 and <code>Boxer Half Pant</code> at ₹200 are <strong>actually the same product</strong>, but appear different due to inconsistent naming.</li>
+<li>Conversely, <code>Half Pant</code> at ₹300 or ₹340 refers to <strong>different products</strong>, despite the same name.</li>
+</ul>
+<p><strong>In short: products are primarily distinguished by their <em>Unit Price</em>, not their <em>Description</em></strong>.</p>
+<p>This realisation hit hard because I had been relying on the &ldquo;Description&rdquo; field to analyse subcategories within a product type. However, most of my feature engineering (e.g., <code>Product_Gender</code>, <code>Product_Category</code>) was derived from that same flawed &ldquo;Description&rdquo; field. That makes analysis at the sub-product level <strong>unreliable</strong> without further cleanup.</p>
+<h3 id="a-data-driven-attempt-to-fix-it-clustering-by-unit-price">A Data-Driven Attempt to Fix It: Clustering by Unit Price</h3>
+<p>Since I had firsthand experience working in the shop, I knew that customers distinguish products (especially for items like Track Pants, Half Pants, etc.) <strong>based on their price point</strong>. So I decided to <strong>cluster products using Unit Price</strong>, hoping this would group similar items more effectively.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># checking out each category</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>product_df <span style="color:#f92672">=</span> final_df[final_df[<span style="color:#e6db74">&#34;Product_Category&#34;</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;Underwear&#34;</span>]<span style="color:#f92672">.</span>copy()
+</span></span><span style="display:flex;"><span>product_df[<span style="color:#e6db74">&#34;WeekDay&#34;</span>] <span style="color:#f92672">=</span> product_df[<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>day_name()
+</span></span></code></pre></div><p>To determine the appropriate number of clusters, I used the elbow method by plotting distortion values (inertia) from KMeans clustering:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_knee</span>(unit_prices, threshold<span style="color:#f92672">=</span><span style="color:#ae81ff">0.5</span>):
+</span></span><span style="display:flex;"><span>    X <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>unique(unit_prices)<span style="color:#f92672">.</span>reshape(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    distortions <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    max_possible_clusters <span style="color:#f92672">=</span> len(np<span style="color:#f92672">.</span>unique(unit_prices))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> k <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">10</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> k <span style="color:#f92672">&gt;</span> max_possible_clusters:
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># No point trying to cluster more than unique points</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">break</span>
+</span></span><span style="display:flex;"><span>        kmeanModel <span style="color:#f92672">=</span> KMeans(n_clusters<span style="color:#f92672">=</span>k, random_state<span style="color:#f92672">=</span><span style="color:#ae81ff">42</span>)<span style="color:#f92672">.</span>fit(X)
+</span></span><span style="display:flex;"><span>        distortions[k] <span style="color:#f92672">=</span> kmeanModel<span style="color:#f92672">.</span>inertia_ <span style="color:#f92672">/</span> X<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    ks <span style="color:#f92672">=</span> sorted(distortions<span style="color:#f92672">.</span>keys())
+</span></span><span style="display:flex;"><span>    distortion_values <span style="color:#f92672">=</span> [distortions[k] <span style="color:#66d9ef">for</span> k <span style="color:#f92672">in</span> ks]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Calculate % drops</span>
+</span></span><span style="display:flex;"><span>    percentage_drops <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">1</span>, len(distortion_values)):
+</span></span><span style="display:flex;"><span>        drop <span style="color:#f92672">=</span> (distortion_values[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> distortion_values[i]) <span style="color:#f92672">/</span> distortion_values[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]
+</span></span><span style="display:flex;"><span>        percentage_drops<span style="color:#f92672">.</span>append(drop)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Find where the drop starts becoming small</span>
+</span></span><span style="display:flex;"><span>    elbow_k <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i, drop <span style="color:#f92672">in</span> enumerate(percentage_drops):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> drop <span style="color:#f92672">&lt;</span> threshold:
+</span></span><span style="display:flex;"><span>            elbow_k <span style="color:#f92672">=</span> ks[i]
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">break</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> elbow_k <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>        elbow_k <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> elbow_k
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>get_knee(np<span style="color:#f92672">.</span>array(final_df[final_df[<span style="color:#e6db74">&#34;Product_Category&#34;</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;Underwear&#34;</span>][<span style="color:#e6db74">&#34;UnitPrice&#34;</span>]))
+</span></span></code></pre></div><p>This gave me 3 clusters for the <strong>Underwear</strong> category. I then applied clustering:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>X <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>array(product_df[<span style="color:#e6db74">&#34;UnitPrice&#34;</span>])<span style="color:#f92672">.</span>reshape(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>kmeans <span style="color:#f92672">=</span> KMeans(n_clusters<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>, random_state<span style="color:#f92672">=</span><span style="color:#ae81ff">42</span>)
+</span></span><span style="display:flex;"><span>product_df[<span style="color:#e6db74">&#34;Clusters&#34;</span>] <span style="color:#f92672">=</span> kmeans<span style="color:#f92672">.</span>fit_predict(X)
+</span></span><span style="display:flex;"><span>product_df[<span style="color:#e6db74">&#34;Clusters&#34;</span>] <span style="color:#f92672">=</span> product_df[<span style="color:#e6db74">&#34;Clusters&#34;</span>]<span style="color:#f92672">.</span>map(product_df<span style="color:#f92672">.</span>groupby(<span style="color:#e6db74">&#34;Clusters&#34;</span>)[<span style="color:#e6db74">&#34;UnitPrice&#34;</span>]<span style="color:#f92672">.</span>apply(<span style="color:#66d9ef">lambda</span> x: <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[</span><span style="color:#e6db74">{</span>x<span style="color:#f92672">.</span>min()<span style="color:#e6db74">}</span><span style="color:#e6db74"> - </span><span style="color:#e6db74">{</span>x<span style="color:#f92672">.</span>max()<span style="color:#e6db74">}</span><span style="color:#e6db74">]&#34;</span>)<span style="color:#f92672">.</span>to_dict())
+</span></span></code></pre></div><p>Aggregated view of product codes by cluster:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>cluster_df <span style="color:#f92672">=</span> product_df<span style="color:#f92672">.</span>groupby([<span style="color:#e6db74">&#34;Clusters&#34;</span>, <span style="color:#e6db74">&#34;Product_CD&#34;</span>])[<span style="color:#e6db74">&#34;Quantity&#34;</span>]<span style="color:#f92672">.</span>sum()<span style="color:#f92672">.</span>unstack()<span style="color:#f92672">.</span>fillna(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>cluster_df <span style="color:#f92672">=</span> cluster_df<span style="color:#f92672">.</span>loc[cluster_df<span style="color:#f92672">.</span>T<span style="color:#f92672">.</span>sum()<span style="color:#f92672">.</span>sort_values(ascending<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)<span style="color:#f92672">.</span>index]<span style="color:#f92672">.</span>T
+</span></span></code></pre></div><p>Now looking at products in cluster (unknowingly choosing Underwear category was best decision because it showed first problem in this method. This gives me learning that to test method, test upon something on which i know the result beforehand like Underwear where i have written description which distinguish each product from another well.):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>cluster_up <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>array(cluster_df<span style="color:#f92672">.</span>columns)
+</span></span><span style="display:flex;"><span>fig, ax <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>subplots(figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">12</span>, <span style="color:#ae81ff">6</span>))
+</span></span><span style="display:flex;"><span>bottom <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>zeros(len(cluster_up))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>colors <span style="color:#f92672">=</span> sns<span style="color:#f92672">.</span>color_palette(<span style="color:#e6db74">&#39;tab20&#39;</span>, n_colors<span style="color:#f92672">=</span>len(cluster_df<span style="color:#f92672">.</span>index))
+</span></span><span style="display:flex;"><span>pcd_to_color <span style="color:#f92672">=</span> {pcd: col <span style="color:#66d9ef">for</span> col, pcd <span style="color:#f92672">in</span> zip(colors, cluster_df<span style="color:#f92672">.</span>index)}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> pcd, vals <span style="color:#f92672">in</span> cluster_df<span style="color:#f92672">.</span>iterrows():
+</span></span><span style="display:flex;"><span>    ax<span style="color:#f92672">.</span>bar(cluster_up, np<span style="color:#f92672">.</span>array(vals), width<span style="color:#f92672">=</span><span style="color:#ae81ff">0.5</span>, label<span style="color:#f92672">=</span>pcd, color<span style="color:#f92672">=</span>pcd_to_color[pcd], bottom<span style="color:#f92672">=</span>bottom)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Add text</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i, qty <span style="color:#f92672">in</span> enumerate(np<span style="color:#f92672">.</span>array(vals)):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> qty <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>            ax<span style="color:#f92672">.</span>text(i, bottom[i] <span style="color:#f92672">+</span> qty<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span>, <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>pcd<span style="color:#e6db74">}</span><span style="color:#e6db74">: </span><span style="color:#e6db74">{</span>int(qty)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>, ha<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;center&#39;</span>, va<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;center&#39;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span>, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;black&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    bottom <span style="color:#f92672">+=</span> np<span style="color:#f92672">.</span>array(vals)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i, total_qty <span style="color:#f92672">in</span> enumerate(np<span style="color:#f92672">.</span>array(cluster_df<span style="color:#f92672">.</span>sum())):
+</span></span><span style="display:flex;"><span>    ax<span style="color:#f92672">.</span>text(i, total_qty <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>, <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Total: </span><span style="color:#e6db74">{</span>int(total_qty)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>, ha<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;center&#39;</span>, va<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;center&#39;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;black&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ax.legend(title=&#39;Product Details&#39;, bbox_to_anchor=(1.05, 1), loc=&#39;upper left&#39;)</span>
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>set_xlabel(<span style="color:#e6db74">&#34;Unit Price Cluster Center&#34;</span>)
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>set_ylabel(<span style="color:#e6db74">&#34;Quantity Sold&#34;</span>)
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>set_title(<span style="color:#e6db74">&#34;Distribution of Unit Price and Details&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/unitpricecluster.png" alt="Unit Price Cluster"></p>
+<h3 id="problems-with-clustering-approach">Problems with Clustering Approach</h3>
+<p>Although clustering seemed promising, several issues emerged:</p>
+<ol>
+<li>
+<p><strong>Incorrect cluster assignment</strong>:<br>
+A product like <code>Macho V Cut</code>, which typically sells at ₹135, got assigned to the <code>[100 - 120]</code> cluster simply because one instance was sold at ₹120. This undermines the integrity of clusters.</p>
+</li>
+<li>
+<p><strong>Unreliable <code>get_knee</code> behaviour</strong> (i can fix it but it won&rsquo;t end with satisfactory results for my analysis):<br>
+The function doesn&rsquo;t return meaningful cluster numbers for many categories such as:</p>
+</li>
+</ol>
+<pre tabindex="0"><code>- Belt
+- Blouse
+- Bra
+- Frock
+- Handkerchief
+- Kurti
+- Leggings
+- Nighties
+- Saree
+- Mosquito Net
+</code></pre><p>Clearly, relying on clustering alone won&rsquo;t cut it.</p>
+<h3 id="the-manual-fix-and-the-pain-that-came-with-it">The Manual Fix (and the Pain That Came With It)</h3>
+<p>Realising this, I undertook a manual project: <strong>adding the correct selling price for each product</strong>, as this is the true distinguishing factor between items in the same category. But I made a poor decision initially:</p>
+<ul>
+<li>
+<p>I added the selling price directly for each entry in the dataset manually. This is bad because my dataset contained above 500 entries and if it had more than this, then this method wouldn&rsquo;t have worked and i would be forced to use below method.</p>
+</li>
+<li>
+<p>A better approach would have been to create a <strong>mapping table</strong> of <code>(Description, Size, Unit Price)</code> → <code>Selling Price</code>, and then programmatically apply it.</p>
+</li>
+</ul>
+<p>This mistake cost me a full day. I:</p>
+<ul>
+<li>Went to the shop and wrote down prices product-by-product.</li>
+<li>Manually entered them into Google Sheets.</li>
+<li>Annoyed the shopkeeper by repeatedly calling them to confirm missing prices 😅. I truly apologise 🙏.</li>
+</ul>
+<p>There are still inaccuracies. For example:</p>
+<ul>
+<li>Track Pants with unit price ₹200 could be of selling price ₹280.</li>
+<li>But I assigned them ₹250 based on store policy (no more than ₹50 discount), even though in reality, customers sometimes win the bargaining game.</li>
+</ul>
+<p>Fortunately, from <strong>April 28th onward</strong>, I started recording descriptions with the selling price embedded, making new data more reliable.</p>
+<h3 id="fixing-description-field-for-clarity">Fixing Description Field for Clarity</h3>
+<p>Once the selling price was available, I updated descriptions accordingly. You can find these changes documented <a href="https://github.com/RoopkumarD/retail_store_analysis/blob/main/price_setting.ipynb">here</a>. For example:</p>
+<ul>
+<li>I separated the <code>Pant</code> category into <strong>Men&rsquo;s Formal Pant</strong> and <strong>Ladies&rsquo; Cycling Pant</strong>.</li>
+</ul>
+<p>To avoid modifying my existing Google App Script data entry app, I decided to <strong>embed the selling price directly into the description</strong>:</p>
+<p><img src="images/appscriptapp.png" alt="Google AppScript data entry app"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>df[<span style="color:#e6db74">&#34;Description&#34;</span>] <span style="color:#f92672">=</span> df[<span style="color:#e6db74">&#34;Selling Price&#34;</span>]<span style="color:#f92672">.</span>astype(str) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; &#34;</span> <span style="color:#f92672">+</span> df[<span style="color:#e6db74">&#34;Description&#34;</span>]
+</span></span></code></pre></div><p>This turned out to be very helpful because now, just by looking at the description, I can accurately distinguish products.</p>
+<h2 id="analysing-discounts-on-products">Analysing Discounts on Products</h2>
+<p>Before we dive into <strong>Question 4</strong>, let’s first address <strong>Question 5</strong>:<br>
+We&rsquo;re exploring the <strong>amount of discount</strong> given on different products. This directly impacts <strong>revenue generation</strong>.</p>
+<p>Imagine if we set a <strong>threshold</strong>—only allowing transactions where the discount is above a certain level. That way, we could optimise pricing to:</p>
+<ul>
+<li>Meet most of the demand</li>
+<li>Avoid underselling</li>
+<li>Maximise revenue from each sale</li>
+</ul>
+<p>We already have data on <strong>Selling Prices</strong>, and since there are multiple prices per product across different transactions, we can work toward identifying an <strong>optimal price</strong> per product.</p>
+<h3 id="feature-engineering">Feature Engineering</h3>
+<p>We perform the same steps we did before and also these below stuff:</p>
+<ul>
+<li>Splitting the description into <code>SellingPrice</code> and <code>Product_Description</code></li>
+<li>Splitting <code>Pant</code> category into <code>Formal Pant</code> and <code>Cycling Pant</code> (did this directly in source spreadsheet) and adding/removing them from above description feature creator function.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>final_df[[<span style="color:#e6db74">&#34;SellingPrice&#34;</span>, <span style="color:#e6db74">&#34;Product_Description&#34;</span>]] <span style="color:#f92672">=</span> final_df[<span style="color:#e6db74">&#34;Description&#34;</span>]<span style="color:#f92672">.</span>str<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34; &#34;</span>, n<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, expand<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>final_df[<span style="color:#e6db74">&#34;SellingPrice&#34;</span>] <span style="color:#f92672">=</span> final_df[<span style="color:#e6db74">&#34;SellingPrice&#34;</span>]<span style="color:#f92672">.</span>astype(int)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># looking at price delta</span>
+</span></span><span style="display:flex;"><span>final_df[<span style="color:#e6db74">&#34;PriceDelta&#34;</span>] <span style="color:#f92672">=</span> final_df[<span style="color:#e6db74">&#34;SellingPrice&#34;</span>] <span style="color:#f92672">-</span> final_df[<span style="color:#e6db74">&#34;UnitPrice&#34;</span>]
+</span></span><span style="display:flex;"><span>final_df[<span style="color:#e6db74">&#34;QuantityPriceDelta&#34;</span>] <span style="color:#f92672">=</span> final_df[<span style="color:#e6db74">&#34;TotalSellingPrice&#34;</span>] <span style="color:#f92672">-</span> final_df[<span style="color:#e6db74">&#34;TotalPrice&#34;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>invqty <span style="color:#f92672">=</span> final_df<span style="color:#f92672">.</span>groupby(<span style="color:#e6db74">&#34;InvoiceNo&#34;</span>)[<span style="color:#e6db74">&#34;Quantity&#34;</span>]<span style="color:#f92672">.</span>sum()<span style="color:#f92672">.</span>to_dict()
+</span></span><span style="display:flex;"><span>final_df[<span style="color:#e6db74">&#34;InvoiceQty&#34;</span>] <span style="color:#f92672">=</span> final_df[<span style="color:#e6db74">&#34;InvoiceNo&#34;</span>]<span style="color:#f92672">.</span>map(invqty)
+</span></span><span style="display:flex;"><span>invtp <span style="color:#f92672">=</span> final_df<span style="color:#f92672">.</span>groupby(<span style="color:#e6db74">&#34;InvoiceNo&#34;</span>)[<span style="color:#e6db74">&#34;TotalSellingPrice&#34;</span>]<span style="color:#f92672">.</span>sum()<span style="color:#f92672">.</span>to_dict()
+</span></span><span style="display:flex;"><span>final_df[<span style="color:#e6db74">&#34;InvoiceTp&#34;</span>] <span style="color:#f92672">=</span> final_df[<span style="color:#e6db74">&#34;InvoiceNo&#34;</span>]<span style="color:#f92672">.</span>map(invtp)
+</span></span></code></pre></div><ul>
+<li><code>InvoiceQty</code>: total products per transaction</li>
+<li><code>InvoiceTp</code>: total revenue per invoice</li>
+</ul>
+<p>These are <strong>important</strong> because shop owners often give discounts based on:</p>
+<ul>
+<li>Total number of items bought</li>
+<li>Total bill amount</li>
+</ul>
+<p>I got this extra information from shopkeeper about how he discounts:</p>
+<ul>
+<li><strong>Small, fixed-price items</strong> (like Underwear, Towels) generally don&rsquo;t get big discounts.</li>
+<li><strong>Higher-priced or shop-priced items</strong> (like Sarees, Jeans) are often discounted more.</li>
+</ul>
+<p>Let’s test this idea with actual data—and see where it holds or fails.</p>
+<h3 id="product-quantity-per-invoice">Product Quantity per Invoice</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>final_df<span style="color:#f92672">.</span>groupby(<span style="color:#e6db74">&#34;InvoiceNo&#34;</span>)[<span style="color:#e6db74">&#34;Quantity&#34;</span>]<span style="color:#f92672">.</span>sum()<span style="color:#f92672">.</span>value_counts()<span style="color:#f92672">.</span>plot(kind<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;bar&#34;</span>)
+</span></span></code></pre></div><p><img src="images/invoiceqtynum.png" alt="Invoice Quantity Number of Entries"></p>
+<ul>
+<li>Most transactions involve just <strong>1 or 2 items</strong>—typical of small, quick purchases.</li>
+</ul>
+<h3 id="distribution-of-discount-pricedelta">Distribution of Discount (PriceDelta)</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>final_df[<span style="color:#e6db74">&#34;PriceDelta&#34;</span>]<span style="color:#f92672">.</span>plot(kind<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;box&#34;</span>)
+</span></span><span style="display:flex;"><span>print(final_df[<span style="color:#e6db74">&#34;PriceDelta&#34;</span>]<span style="color:#f92672">.</span>describe())
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><pre tabindex="0"><code>count    589.000000
+mean      45.595925
+std       76.718651
+min        0.000000
+25%        0.000000
+50%       20.000000
+75%       50.000000
+max      900.000000
+Name: PriceDelta, dtype: float64
+</code></pre><p><img src="images/pricedeltaboxplot.png" alt="Price Delta Box Plot"></p>
+<ul>
+<li>Most discounts fall <strong>under ₹50</strong></li>
+<li>But there are <strong>many entries over ₹100</strong></li>
+<li>Max discount even hits <strong>₹900</strong></li>
+</ul>
+<h3 id="discounts-by-product-category">Discounts by Product Category</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>figure(figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">15</span>, <span style="color:#ae81ff">6</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sns<span style="color:#f92672">.</span>boxplot(x<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Product_Category&#34;</span>, y<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;PriceDelta&#34;</span>, data<span style="color:#f92672">=</span>final_df)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xticks(rotation<span style="color:#f92672">=</span><span style="color:#ae81ff">45</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#34;Box Plot of PriceDelta by Product Category&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>grid(axis<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;y&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/categorypdboxplot.png" alt="Category Wise Price Delta Box Plot"></p>
+<ul>
+<li><strong>Lower-priced products</strong> = lower discounts</li>
+<li><strong>Sarees, Jeans</strong> = much higher discount ranges</li>
+</ul>
+<h3 id="where-are-we-losing-the-most-money">Where Are We Losing the Most Money?</h3>
+<p>We look at total <strong>discount loss</strong> (<code>QuantityPriceDelta</code>) by category:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>temp_df <span style="color:#f92672">=</span> final_df<span style="color:#f92672">.</span>groupby(<span style="color:#e6db74">&#34;Product_Category&#34;</span>)[
+</span></span><span style="display:flex;"><span>    [<span style="color:#e6db74">&#34;QuantityPriceDelta&#34;</span>, <span style="color:#e6db74">&#34;Quantity&#34;</span>]
+</span></span><span style="display:flex;"><span>]<span style="color:#f92672">.</span>sum()<span style="color:#f92672">.</span>sort_values(by<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;QuantityPriceDelta&#34;</span>, ascending<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>temp_df <span style="color:#f92672">=</span> temp_df[temp_df[<span style="color:#e6db74">&#34;QuantityPriceDelta&#34;</span>] <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>filtered_df <span style="color:#f92672">=</span> temp_df
+</span></span><span style="display:flex;"><span>ax <span style="color:#f92672">=</span> filtered_df[<span style="color:#e6db74">&#34;QuantityPriceDelta&#34;</span>]<span style="color:#f92672">.</span>plot(kind<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;bar&#39;</span>, figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">16</span>, <span style="color:#ae81ff">6</span>), color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;skyblue&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i, (qty_price_delta, qty) <span style="color:#f92672">in</span> enumerate(zip(filtered_df[<span style="color:#e6db74">&#34;QuantityPriceDelta&#34;</span>], filtered_df[<span style="color:#e6db74">&#34;Quantity&#34;</span>])):
+</span></span><span style="display:flex;"><span>    ax<span style="color:#f92672">.</span>text(i, qty_price_delta <span style="color:#f92672">+</span> <span style="color:#ae81ff">100</span>, <span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;qty: </span><span style="color:#e6db74">{</span>int(qty)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>, ha<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;center&#39;</span>, va<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;bottom&#39;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#ae81ff">9</span>, rotation<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> container <span style="color:#f92672">in</span> ax<span style="color:#f92672">.</span>containers:
+</span></span><span style="display:flex;"><span>    ax<span style="color:#f92672">.</span>bar_label(container, fmt<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">%.0f</span><span style="color:#e6db74">&#39;</span>, label_type<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;center&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#34;QuantityPriceDelta per Product Category (with Quantity info)&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#34;QuantityPriceDelta&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#34;Product Category&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/qtypricedeltabar.png" alt="Product Discount Aggregate by Product Category"></p>
+<ul>
+<li>Highest losses from <strong>Jeans</strong> and similar categories</li>
+<li>These products are getting <strong>heavy discounts frequently</strong></li>
+</ul>
+<h3 id="case-study-underwear-category">Case Study: Underwear Category</h3>
+<p>Now let’s zoom in and analyse the <strong>Underwear</strong> category specifically.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>subset_df <span style="color:#f92672">=</span> final_df[final_df[<span style="color:#e6db74">&#34;Product_Category&#34;</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;Underwear&#34;</span>]<span style="color:#f92672">.</span>copy()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>subset_df[<span style="color:#e6db74">&#39;PriceDeltaCount&#39;</span>] <span style="color:#f92672">=</span> (
+</span></span><span style="display:flex;"><span>    subset_df<span style="color:#f92672">.</span>groupby([<span style="color:#e6db74">&#39;SellingPrice&#39;</span>])[<span style="color:#e6db74">&#39;PriceDelta&#39;</span>]
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">.</span>transform(<span style="color:#66d9ef">lambda</span> x: x<span style="color:#f92672">.</span>map(x<span style="color:#f92672">.</span>value_counts()))
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><h4 id="scatter-plot-pricedelta-by-sellingprice">Scatter Plot: PriceDelta by SellingPrice</h4>
+<ul>
+<li><strong>X-axis</strong>: how many times that discount occurred</li>
+<li><strong>Y-axis</strong>: actual discount amount</li>
+<li><strong>Colour</strong>: quantity sold in that invoice</li>
+<li><strong>Size</strong>: total bill for that invoice</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># FacetGrid setup</span>
+</span></span><span style="display:flex;"><span>g <span style="color:#f92672">=</span> sns<span style="color:#f92672">.</span>FacetGrid(
+</span></span><span style="display:flex;"><span>    subset_df,
+</span></span><span style="display:flex;"><span>    col<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;SellingPrice&#39;</span>,
+</span></span><span style="display:flex;"><span>    col_wrap<span style="color:#f92672">=</span><span style="color:#ae81ff">4</span>,
+</span></span><span style="display:flex;"><span>    height<span style="color:#f92672">=</span><span style="color:#ae81ff">4</span>,
+</span></span><span style="display:flex;"><span>    sharex<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>,
+</span></span><span style="display:flex;"><span>    sharey<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>color_palette <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;flare&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Plot without auto-legend</span>
+</span></span><span style="display:flex;"><span>g<span style="color:#f92672">.</span>map_dataframe(
+</span></span><span style="display:flex;"><span>    sns<span style="color:#f92672">.</span>scatterplot,
+</span></span><span style="display:flex;"><span>    x<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;PriceDeltaCount&#39;</span>,
+</span></span><span style="display:flex;"><span>    y<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;PriceDelta&#39;</span>,
+</span></span><span style="display:flex;"><span>    hue<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;InvoiceQty&#34;</span>,
+</span></span><span style="display:flex;"><span>    size<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;InvoiceTp&#34;</span>,
+</span></span><span style="display:flex;"><span>    sizes<span style="color:#f92672">=</span>(<span style="color:#ae81ff">20</span>, <span style="color:#ae81ff">400</span>),
+</span></span><span style="display:flex;"><span>    palette<span style="color:#f92672">=</span>color_palette,
+</span></span><span style="display:flex;"><span>    legend<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>  <span style="color:#75715e"># Prevent seaborn from mixing hue+size in legend</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Add grid to all plots</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> ax <span style="color:#f92672">in</span> g<span style="color:#f92672">.</span>axes<span style="color:#f92672">.</span>flatten():
+</span></span><span style="display:flex;"><span>    ax<span style="color:#f92672">.</span>grid(<span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Create custom hue legend for InvoiceQty only</span>
+</span></span><span style="display:flex;"><span>hue_levels <span style="color:#f92672">=</span> sorted(subset_df[<span style="color:#e6db74">&#39;InvoiceQty&#39;</span>]<span style="color:#f92672">.</span>unique())
+</span></span><span style="display:flex;"><span>hue_palette <span style="color:#f92672">=</span> sns<span style="color:#f92672">.</span>color_palette(color_palette, len(hue_levels))
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">hue_legend_handles = [
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    mpatches.Patch(color=hue_palette[i], label=f&#39;</span><span style="color:#e6db74">{level}</span><span style="color:#e6db74">&#39;)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    for i, level in enumerate(hue_levels)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Create custom legend handles with circular markers</span>
+</span></span><span style="display:flex;"><span>hue_legend_handles <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    mlines<span style="color:#f92672">.</span>Line2D([], [], marker<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;o&#39;</span>, linestyle<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;None&#39;</span>,
+</span></span><span style="display:flex;"><span>                  color<span style="color:#f92672">=</span>hue_palette[i], label<span style="color:#f92672">=</span><span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">{</span>level<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>,
+</span></span><span style="display:flex;"><span>                  markersize<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i, level <span style="color:#f92672">in</span> enumerate(hue_levels)
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Add hue legend only</span>
+</span></span><span style="display:flex;"><span>g<span style="color:#f92672">.</span>fig<span style="color:#f92672">.</span>legend(
+</span></span><span style="display:flex;"><span>    handles<span style="color:#f92672">=</span>hue_legend_handles,
+</span></span><span style="display:flex;"><span>    title<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;InvoiceQty (color)&#39;</span>,
+</span></span><span style="display:flex;"><span>    loc<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;upper right&#39;</span>,
+</span></span><span style="display:flex;"><span>    bbox_to_anchor<span style="color:#f92672">=</span>(<span style="color:#ae81ff">1.10</span>, <span style="color:#ae81ff">0.8</span>)
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Label and layout</span>
+</span></span><span style="display:flex;"><span>g<span style="color:#f92672">.</span>set_axis_labels(<span style="color:#e6db74">&#34;Frequency of PriceDelta&#34;</span>, <span style="color:#e6db74">&#34;PriceDelta&#34;</span>)
+</span></span><span style="display:flex;"><span>g<span style="color:#f92672">.</span>fig<span style="color:#f92672">.</span>subplots_adjust(top<span style="color:#f92672">=</span><span style="color:#ae81ff">0.9</span>)
+</span></span><span style="display:flex;"><span>g<span style="color:#f92672">.</span>fig<span style="color:#f92672">.</span>suptitle(<span style="color:#e6db74">&#39;Scatter Plot of PriceDelta Frequency by SellingPrice</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">(Marker size indicates Invoice Total Price)&#39;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#ae81ff">14</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/scatterplotpricedelta.png" alt="Scatter Plot for each Selling Price"></p>
+<p><strong>Observations:</strong></p>
+<ul>
+<li>Bigger orders tend to get higher discounts (e.g. ₹135, ₹140, ₹160, etc.)</li>
+<li>₹120 stays close to ₹20 discount <em>no matter what</em>, even for large bills</li>
+</ul>
+<h4 id="box-plot-pricedelta-distribution-for-each-selling-price">Box Plot: PriceDelta Distribution for Each Selling Price</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>figure(figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">15</span>, <span style="color:#ae81ff">6</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sns<span style="color:#f92672">.</span>boxplot(x<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;SellingPrice&#34;</span>, y<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;PriceDelta&#34;</span>, data<span style="color:#f92672">=</span>subset_df)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#34;Box Plot of PriceDelta by SellingPrice&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/boxplotpricedelta.png" alt="Box Plot price delta of Underwear Category"></p>
+<ul>
+<li>Most discounts hover around <strong>₹30</strong></li>
+<li>But for ₹200 items, we see <strong>discounts as high as ₹60</strong></li>
+</ul>
+<h3 id="pricedelta-interactive-drop-down">PriceDelta Interactive Drop Down</h3>
+<p>To explore other product categories like this, I have added an <strong>interactive dropdown</strong> that lets you see these two plots for every category:</p>
+
+
+<select id="pricedeltaImageDropdown" style="
+  font-family: monospace;
+  font-size: 16px;
+  padding: 0.4rem;
+  margin: 1rem 0;
+  border: 1px solid currentColor;
+">
+  
+    <option value="images/pricedelta/Kurti.png">Kurti</option>
+  
+    <option value="images/pricedelta/Bra.png">Bra</option>
+  
+    <option value="images/pricedelta/Cycling Pant.png">Cycling Pant</option>
+  
+    <option value="images/pricedelta/Track Pant.png">Track Pant</option>
+  
+    <option value="images/pricedelta/Saree.png">Saree</option>
+  
+    <option value="images/pricedelta/Lungi.png">Lungi</option>
+  
+    <option value="images/pricedelta/Formal Pant.png">Formal Pant</option>
+  
+    <option value="images/pricedelta/Plazo.png">Plazo</option>
+  
+    <option value="images/pricedelta/Sindoor.png">Sindoor</option>
+  
+    <option value="images/pricedelta/Dungarees.png">Dungarees</option>
+  
+    <option value="images/pricedelta/Mosquito Net.png">Mosquito Net</option>
+  
+    <option value="images/pricedelta/Inner Slips.png">Inner Slips</option>
+  
+    <option value="images/pricedelta/Pillow Cover.png">Pillow Cover</option>
+  
+    <option value="images/pricedelta/Vest.png">Vest</option>
+  
+    <option value="images/pricedelta/Night Dress.png">Night Dress</option>
+  
+    <option value="images/pricedelta/Blanket.png">Blanket</option>
+  
+    <option value="images/pricedelta/Wallet.png">Wallet</option>
+  
+    <option value="images/pricedelta/Blouse.png">Blouse</option>
+  
+    <option value="images/pricedelta/Nighties.png">Nighties</option>
+  
+    <option value="images/pricedelta/Cap.png">Cap</option>
+  
+    <option value="images/pricedelta/Leggings.png">Leggings</option>
+  
+    <option value="images/pricedelta/Half Pant.png">Half Pant</option>
+  
+    <option value="images/pricedelta/Scarf.png">Scarf</option>
+  
+    <option value="images/pricedelta/Towel.png">Towel</option>
+  
+    <option value="images/pricedelta/Kurta.png">Kurta</option>
+  
+    <option value="images/pricedelta/Dupatta.png">Dupatta</option>
+  
+    <option value="images/pricedelta/Mask.png">Mask</option>
+  
+    <option value="images/pricedelta/Frock.png">Frock</option>
+  
+    <option value="images/pricedelta/Belt.png">Belt</option>
+  
+    <option value="images/pricedelta/Stoles.png">Stoles</option>
+  
+    <option value="images/pricedelta/Handkerchief.png">Handkerchief</option>
+  
+    <option value="images/pricedelta/Petticoat.png">Petticoat</option>
+  
+    <option value="images/pricedelta/Socks.png">Socks</option>
+  
+    <option value="images/pricedelta/T-Shirt.png">T-Shirt</option>
+  
+    <option value="images/pricedelta/Bedsheet.png">Bedsheet</option>
+  
+    <option value="images/pricedelta/Shirt.png">Shirt</option>
+  
+    <option value="images/pricedelta/Jeans.png">Jeans</option>
+  
+    <option value="images/pricedelta/Set.png">Set</option>
+  
+    <option value="images/pricedelta/Panties.png">Panties</option>
+  
+    <option value="images/pricedelta/Hand Gloves.png">Hand Gloves</option>
+  
+</select>
+
+<img
+  id="pricedeltadisplayImage"
+  src="images/pricedelta/Kurti.png"
+  alt="Kurti pricedelta Analysis"
+/>
+
+<script>
+  document.getElementById("pricedeltaImageDropdown").addEventListener('change', function () {
+    const selectedImage = this.value;
+    document.getElementById("pricedeltadisplayImage").src = selectedImage;
+  });
+</script>
+
+<h2 id="q4-product-level-analysis-within-each-category">Q4. Product-Level Analysis Within Each Category</h2>
+<p>To analyse <strong>product-level trends</strong> within a category, we need a consistent way to <strong>identify and compare individual products</strong>. Thankfully, our <code>Description</code> field (with Selling Price prefixed) offers good separation between product variants.</p>
+<p>However, we need to:</p>
+<ul>
+<li><strong>Remove colour names</strong> from product descriptions (to focus on base product and another reason is that i may have not added colour value for many entries -&gt; again data collection error).</li>
+</ul>
+<h3 id="cleaning-product-descriptions">Cleaning Product Descriptions</h3>
+<p>We define a function to remove colour from product names:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_product_feature</span>(desc_string):
+</span></span><span style="display:flex;"><span>    colors <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;Black&#34;</span>, <span style="color:#e6db74">&#34;Blue&#34;</span>, <span style="color:#e6db74">&#34;Dark Green&#34;</span>, <span style="color:#e6db74">&#34;Brown&#34;</span>, <span style="color:#e6db74">&#34;Grey&#34;</span>, <span style="color:#e6db74">&#34;Purple&#34;</span>, <span style="color:#e6db74">&#34;White&#34;</span>, <span style="color:#e6db74">&#34;Red&#34;</span>]
+</span></span><span style="display:flex;"><span>    matched_color <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> color <span style="color:#f92672">in</span> colors:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> color <span style="color:#f92672">in</span> desc_string:
+</span></span><span style="display:flex;"><span>            matched_color <span style="color:#f92672">=</span> color
+</span></span><span style="display:flex;"><span>            desc_string <span style="color:#f92672">=</span> desc_string<span style="color:#f92672">.</span>replace(matched_color, <span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">break</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    cleaned_details <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39; &#39;</span><span style="color:#f92672">.</span>join(desc_string<span style="color:#f92672">.</span>split())
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> cleaned_details
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>final_df[<span style="color:#e6db74">&#34;Product_Feature&#34;</span>] <span style="color:#f92672">=</span> final_df[<span style="color:#e6db74">&#34;Description&#34;</span>]<span style="color:#f92672">.</span>apply(get_product_feature)
+</span></span><span style="display:flex;"><span>category_df <span style="color:#f92672">=</span> final_df[final_df[<span style="color:#e6db74">&#34;Product_Category&#34;</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;Underwear&#34;</span>]<span style="color:#f92672">.</span>copy()
+</span></span></code></pre></div><h3 id="product-performance-quantity-vs-revenue">Product Performance: Quantity vs Revenue</h3>
+<p>We group by cleaned product description and compare:</p>
+<ul>
+<li>Total quantity sold</li>
+<li>Total revenue</li>
+<li>Selling price (for sorting)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>product_category_df <span style="color:#f92672">=</span> category_df<span style="color:#f92672">.</span>groupby(<span style="color:#e6db74">&#34;Product_Feature&#34;</span>)<span style="color:#f92672">.</span>agg(
+</span></span><span style="display:flex;"><span>    Quantity<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#34;Quantity&#34;</span>, <span style="color:#e6db74">&#34;sum&#34;</span>),
+</span></span><span style="display:flex;"><span>    Revenue<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#34;TotalPrice&#34;</span>, <span style="color:#e6db74">&#34;sum&#34;</span>),
+</span></span><span style="display:flex;"><span>    SP<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#34;SellingPrice&#34;</span>, <span style="color:#66d9ef">lambda</span> x: list(x)[<span style="color:#ae81ff">0</span>])
+</span></span><span style="display:flex;"><span>)<span style="color:#f92672">.</span>sort_values(by<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;SP&#34;</span>, ascending<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span></code></pre></div><p>We then plot <strong>Quantity and Revenue per Product</strong>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>categories <span style="color:#f92672">=</span> list(product_category_df<span style="color:#f92672">.</span>index)
+</span></span><span style="display:flex;"><span>values1 <span style="color:#f92672">=</span> list(product_category_df[<span style="color:#e6db74">&#34;Quantity&#34;</span>])
+</span></span><span style="display:flex;"><span>values2 <span style="color:#f92672">=</span> list(product_category_df[<span style="color:#e6db74">&#34;Revenue&#34;</span>])
+</span></span><span style="display:flex;"><span>total_rev <span style="color:#f92672">=</span> sum(values2)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>x <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>arange(len(categories))  <span style="color:#75715e"># the label locations</span>
+</span></span><span style="display:flex;"><span>width <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.35</span>  <span style="color:#75715e"># width of the bars</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>fig, ax1 <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>subplots(figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">15</span>, <span style="color:#ae81ff">10</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>bars1 <span style="color:#f92672">=</span> ax1<span style="color:#f92672">.</span>bar(x <span style="color:#f92672">-</span> width<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span>, values1, width, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Quantity&#39;</span>, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;skyblue&#39;</span>)
+</span></span><span style="display:flex;"><span>ax2 <span style="color:#f92672">=</span> ax1<span style="color:#f92672">.</span>twinx()
+</span></span><span style="display:flex;"><span>bars2 <span style="color:#f92672">=</span> ax2<span style="color:#f92672">.</span>bar(x <span style="color:#f92672">+</span> width<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span>, values2, width, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Revenue&#39;</span>, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;salmon&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Add labels on bars</span>
+</span></span><span style="display:flex;"><span>ax1<span style="color:#f92672">.</span>bar_label(bars1, rotation<span style="color:#f92672">=</span><span style="color:#ae81ff">90</span>, label_type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;center&#34;</span>)  <span style="color:#75715e"># For Quantity</span>
+</span></span><span style="display:flex;"><span>ax2<span style="color:#f92672">.</span>bar_label(
+</span></span><span style="display:flex;"><span>    bars2,
+</span></span><span style="display:flex;"><span>    labels<span style="color:#f92672">=</span>[<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>format_currency(v)<span style="color:#e6db74">}</span><span style="color:#e6db74">    (</span><span style="color:#e6db74">{</span>round((v<span style="color:#f92672">/</span>total_rev) <span style="color:#f92672">*</span> <span style="color:#ae81ff">100</span>, <span style="color:#ae81ff">2</span>)<span style="color:#e6db74">}</span><span style="color:#e6db74">%)&#34;</span> <span style="color:#66d9ef">for</span> v <span style="color:#f92672">in</span> values2],
+</span></span><span style="display:flex;"><span>    rotation<span style="color:#f92672">=</span><span style="color:#ae81ff">90</span>,
+</span></span><span style="display:flex;"><span>    label_type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;center&#34;</span>
+</span></span><span style="display:flex;"><span>)  <span style="color:#75715e"># For Revenue</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Labels and titles</span>
+</span></span><span style="display:flex;"><span>ax1<span style="color:#f92672">.</span>set_ylabel(<span style="color:#e6db74">&#39;Quantity&#39;</span>)
+</span></span><span style="display:flex;"><span>ax2<span style="color:#f92672">.</span>set_ylabel(<span style="color:#e6db74">&#39;Revenue&#39;</span>)
+</span></span><span style="display:flex;"><span>ax1<span style="color:#f92672">.</span>set_title(<span style="color:#e6db74">&#39;Quantity and Revenue by Product Description (Sorted By Selling Price)&#39;</span>)
+</span></span><span style="display:flex;"><span>ax1<span style="color:#f92672">.</span>set_xticks(x)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>wrapped_labels <span style="color:#f92672">=</span> [textwrap<span style="color:#f92672">.</span>fill(label, <span style="color:#ae81ff">20</span>) <span style="color:#66d9ef">for</span> label <span style="color:#f92672">in</span> categories]  <span style="color:#75715e"># wrap at 10 characters</span>
+</span></span><span style="display:flex;"><span>ax1<span style="color:#f92672">.</span>set_xticklabels(wrapped_labels, rotation<span style="color:#f92672">=</span><span style="color:#ae81ff">90</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Legends</span>
+</span></span><span style="display:flex;"><span>custom_legend <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    mpatches<span style="color:#f92672">.</span>Patch(facecolor<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;skyblue&#39;</span>, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Quantity&#39;</span>),
+</span></span><span style="display:flex;"><span>    mpatches<span style="color:#f92672">.</span>Patch(facecolor<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;salmon&#39;</span>, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Revenue&#39;</span>)
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ax1<span style="color:#f92672">.</span>legend(handles<span style="color:#f92672">=</span>custom_legend)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/qtyrevproductdesc.png" alt="Quantity and Revenue per Product under same Category"></p>
+<p><strong>Insights:</strong></p>
+<ul>
+<li><strong>Most units sold</strong> are on the left (lower-priced products)</li>
+<li>The <strong>₹200 product</strong> (far right) sold fewer units but contributes significantly to <strong>total revenue</strong></li>
+</ul>
+<h3 id="mapping-products-to-numbers">Mapping Products to Numbers</h3>
+<p>For compact plotting, we map product descriptions to numbers</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>features <span style="color:#f92672">=</span> category_df[<span style="color:#e6db74">&#34;Product_Feature&#34;</span>]<span style="color:#f92672">.</span>sort_values()<span style="color:#f92672">.</span>unique()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Map product names to numeric labels</span>
+</span></span><span style="display:flex;"><span>product_mapping <span style="color:#f92672">=</span> {prod: i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">for</span> i, prod <span style="color:#f92672">in</span> enumerate(features)}
+</span></span><span style="display:flex;"><span>inverse_mapping <span style="color:#f92672">=</span> {v: k <span style="color:#66d9ef">for</span> k, v <span style="color:#f92672">in</span> product_mapping<span style="color:#f92672">.</span>items()}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>category_df[<span style="color:#e6db74">&#34;Product_Feature_Number&#34;</span>] <span style="color:#f92672">=</span> category_df[<span style="color:#e6db74">&#34;Product_Feature&#34;</span>]<span style="color:#f92672">.</span>map(product_mapping)
+</span></span></code></pre></div><p>Also, we collect <strong>all sales dates</strong> to <code>reindex</code> pivot table below otherwise it only shows dates when the product was sold:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>all_dates <span style="color:#f92672">=</span> final_df[<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>date<span style="color:#f92672">.</span>sort_values()<span style="color:#f92672">.</span>unique()
+</span></span></code></pre></div><h3 id="heatmap-product-demand-over-time">Heatmap: Product Demand Over Time</h3>
+<p>We generate a <strong>heatmap of demand</strong> per product over active sales days:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>cluster_time_df <span style="color:#f92672">=</span> category_df<span style="color:#f92672">.</span>groupby(
+</span></span><span style="display:flex;"><span>    [category_df[<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>date, <span style="color:#e6db74">&#34;Product_Feature_Number&#34;</span>]
+</span></span><span style="display:flex;"><span>)[<span style="color:#e6db74">&#34;Quantity&#34;</span>]<span style="color:#f92672">.</span>sum()<span style="color:#f92672">.</span>unstack()<span style="color:#f92672">.</span>fillna(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Sort by Selling Price</span>
+</span></span><span style="display:flex;"><span>sorted_products <span style="color:#f92672">=</span> cluster_time_df<span style="color:#f92672">.</span>columns<span style="color:#f92672">.</span>sort_values()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cluster_time_df <span style="color:#f92672">=</span> cluster_time_df<span style="color:#f92672">.</span>reindex(all_dates, fill_value<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Plot the heatmap</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># plt.figure(figsize=(12, 6))</span>
+</span></span><span style="display:flex;"><span>sns<span style="color:#f92672">.</span>heatmap(cluster_time_df<span style="color:#f92672">.</span>T, cmap<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;mako&#34;</span>, annot<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>, cbar_kws<span style="color:#f92672">=</span>{<span style="color:#e6db74">&#39;label&#39;</span>: <span style="color:#e6db74">&#39;Quantity Sold&#39;</span>})
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#34;Product Demand Heatmap (Sorted by Selling Price)&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#34;Date&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#34;Product #&#34;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xticks(rotation<span style="color:#f92672">=</span><span style="color:#ae81ff">90</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Add legend for product mapping</span>
+</span></span><span style="display:flex;"><span>legend_text <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">.</span>join([<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>num<span style="color:#e6db74">}</span><span style="color:#e6db74">: </span><span style="color:#e6db74">{</span>name<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#66d9ef">for</span> num, name <span style="color:#f92672">in</span> inverse_mapping<span style="color:#f92672">.</span>items()])
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>gcf()<span style="color:#f92672">.</span>text(<span style="color:#ae81ff">0.02</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">0.4</span>, <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Legend:</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">{</span>legend_text<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span>, ha<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;left&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/productdemandheatmap.png" alt="Product Demand Heatmap"></p>
+<p><strong>Takeaway:</strong></p>
+<ul>
+<li>This plot effectively captures <strong>temporal product demand</strong>.</li>
+<li>Products with consistent demand spikes are easily identifiable.</li>
+</ul>
+<h3 id="is-size-analysis-useful">Is Size Analysis Useful?</h3>
+<p>We first verify if the <code>Size</code> field is reliable:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>nanvals <span style="color:#f92672">=</span> sum(category_df[<span style="color:#e6db74">&#34;Size&#34;</span>]<span style="color:#f92672">.</span>isna() <span style="color:#f92672">*</span> <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Number rows where size is nan -&gt; </span><span style="color:#e6db74">{</span>nanvals<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Percentage of that -&gt; </span><span style="color:#e6db74">{</span>nanvals <span style="color:#f92672">/</span> category_df[<span style="color:#e6db74">&#39;Size&#39;</span>]<span style="color:#f92672">.</span>size<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span></code></pre></div><pre tabindex="0"><code>Number rows where size is nan -&gt; 0
+Percentage of that -&gt; 0.0
+</code></pre><p>Yes, we can safely proceed with <strong>Size-based analysis</strong></p>
+<h3 id="heatmap-size-demand-over-time">Heatmap: Size Demand Over Time</h3>
+<p>We plot a heatmap to understand <strong>size-wise sales patterns</strong> across days:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>size_time_df <span style="color:#f92672">=</span> category_df<span style="color:#f92672">.</span>groupby([category_df[<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>date, <span style="color:#e6db74">&#34;Size&#34;</span>])[<span style="color:#e6db74">&#34;Quantity&#34;</span>]<span style="color:#f92672">.</span>sum()<span style="color:#f92672">.</span>unstack()<span style="color:#f92672">.</span>fillna(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>size_time_df <span style="color:#f92672">=</span> size_time_df<span style="color:#f92672">.</span>loc[
+</span></span><span style="display:flex;"><span>    size_time_df<span style="color:#f92672">.</span>sort_index()<span style="color:#f92672">.</span>index,
+</span></span><span style="display:flex;"><span>    pd<span style="color:#f92672">.</span>Series(size_time_df<span style="color:#f92672">.</span>columns)<span style="color:#f92672">.</span>sort_values(ascending<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># to add all the dates</span>
+</span></span><span style="display:flex;"><span>size_time_df <span style="color:#f92672">=</span> size_time_df<span style="color:#f92672">.</span>reindex(all_dates, fill_value<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Create sorted heatmap</span>
+</span></span><span style="display:flex;"><span>sns<span style="color:#f92672">.</span>heatmap(
+</span></span><span style="display:flex;"><span>    size_time_df<span style="color:#f92672">.</span>T,
+</span></span><span style="display:flex;"><span>    cmap<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;mako&#39;</span>,
+</span></span><span style="display:flex;"><span>    annot<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>,
+</span></span><span style="display:flex;"><span>    cbar_kws<span style="color:#f92672">=</span>{<span style="color:#e6db74">&#39;label&#39;</span>: <span style="color:#e6db74">&#39;Quantity Sold&#39;</span>}
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#39;Size Demand Heatmap&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#39;Date&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#39;Size&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xticks(rotation<span style="color:#f92672">=</span><span style="color:#ae81ff">45</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/sizedemandheatmap.png" alt="Size Demand Heatmap"></p>
+<p><strong>Observation:</strong></p>
+<ul>
+<li>Majority of sales come from sizes <strong>85 and 90</strong></li>
+</ul>
+<h3 id="matrix-size-vs-product-feature">Matrix: Size vs Product Feature</h3>
+<p>This heatmap shows <strong>quantity sold by Size and Product</strong>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Size-price matrix</span>
+</span></span><span style="display:flex;"><span>size_price <span style="color:#f92672">=</span> category_df<span style="color:#f92672">.</span>pivot_table(index<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Size&#39;</span>, columns<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Product_Feature_Number&#39;</span>, values<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Quantity&#39;</span>, aggfunc<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;sum&#39;</span>)
+</span></span><span style="display:flex;"><span>size_price <span style="color:#f92672">=</span> size_price<span style="color:#f92672">.</span>loc[
+</span></span><span style="display:flex;"><span>    size_price<span style="color:#f92672">.</span>index<span style="color:#f92672">.</span>sort_values(ascending<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>),
+</span></span><span style="display:flex;"><span>    size_price<span style="color:#f92672">.</span>columns<span style="color:#f92672">.</span>sort_values()
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>figure(figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">5</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sns<span style="color:#f92672">.</span>heatmap(size_price, annot<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, fmt<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;.0f&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Add legend for product mapping</span>
+</span></span><span style="display:flex;"><span>legend_text <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">.</span>join([<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>num<span style="color:#e6db74">}</span><span style="color:#e6db74">: </span><span style="color:#e6db74">{</span>name<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#66d9ef">for</span> num, name <span style="color:#f92672">in</span> inverse_mapping<span style="color:#f92672">.</span>items()])
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>gcf()<span style="color:#f92672">.</span>text(<span style="color:#ae81ff">0.02</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">0.4</span>, <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Legend:</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">{</span>legend_text<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span>, ha<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;left&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#39;Total Quantity by Size and Product&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/qtysizeproduct.png" alt="Size Product Matrix"></p>
+<ul>
+<li>Some products dominate specific sizes</li>
+<li>Others are more evenly distributed</li>
+</ul>
+<h3 id="heatmaps-by-size-over-time">Heatmaps by Size Over Time</h3>
+<p>We break down demand by <strong>product and size across time</strong>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>sizes <span style="color:#f92672">=</span> category_df[<span style="color:#f92672">~</span>category_df[<span style="color:#e6db74">&#34;Size&#34;</span>]<span style="color:#f92672">.</span>isna()][<span style="color:#e6db74">&#34;Size&#34;</span>]<span style="color:#f92672">.</span>sort_values()<span style="color:#f92672">.</span>unique()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>n_cols <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>n_rows <span style="color:#f92672">=</span> math<span style="color:#f92672">.</span>ceil(len(sizes) <span style="color:#f92672">/</span> n_cols)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Dynamically scale figure size (e.g., 6x4 inches per subplot)</span>
+</span></span><span style="display:flex;"><span>fig, axes <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>subplots(n_rows, n_cols, figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">6</span> <span style="color:#f92672">*</span> n_cols, <span style="color:#ae81ff">4</span> <span style="color:#f92672">*</span> n_rows))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> _, size <span style="color:#f92672">in</span> enumerate(sizes):
+</span></span><span style="display:flex;"><span>    ax <span style="color:#f92672">=</span> axes[i <span style="color:#f92672">//</span> <span style="color:#ae81ff">2</span>, i <span style="color:#f92672">%</span> <span style="color:#ae81ff">2</span>]
+</span></span><span style="display:flex;"><span>    k <span style="color:#f92672">=</span> category_df[category_df[<span style="color:#e6db74">&#34;Size&#34;</span>] <span style="color:#f92672">==</span> size]
+</span></span><span style="display:flex;"><span>    k <span style="color:#f92672">=</span> k<span style="color:#f92672">.</span>groupby([k[<span style="color:#e6db74">&#34;PaymentDateTime&#34;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>date, k[<span style="color:#e6db74">&#34;Product_Feature_Number&#34;</span>]])[<span style="color:#e6db74">&#34;Quantity&#34;</span>]<span style="color:#f92672">.</span>sum()<span style="color:#f92672">.</span>unstack()<span style="color:#f92672">.</span>fillna(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>    k <span style="color:#f92672">=</span> k<span style="color:#f92672">.</span>reindex(all_dates, fill_value<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>    k<span style="color:#f92672">.</span>columns <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>array(k<span style="color:#f92672">.</span>columns)
+</span></span><span style="display:flex;"><span>    sns<span style="color:#f92672">.</span>heatmap(k<span style="color:#f92672">.</span>T, cmap<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;mako&#34;</span>, annot<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>, cbar_kws<span style="color:#f92672">=</span>{<span style="color:#e6db74">&#39;label&#39;</span>: <span style="color:#e6db74">&#34;Quantity Sold&#34;</span>}, ax<span style="color:#f92672">=</span>ax)
+</span></span><span style="display:flex;"><span>    ax<span style="color:#f92672">.</span>set_title(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Size </span><span style="color:#e6db74">{</span>size<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>    ax<span style="color:#f92672">.</span>tick_params(axis<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;x&#39;</span>, rotation<span style="color:#f92672">=</span><span style="color:#ae81ff">45</span>)
+</span></span><span style="display:flex;"><span>    ax<span style="color:#f92672">.</span>set_xlabel(<span style="color:#e6db74">&#39;&#39;</span>)
+</span></span><span style="display:flex;"><span>    i <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> i <span style="color:#f92672">%</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>    axes[i <span style="color:#f92672">//</span> <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>set_axis_off()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Add legend for product mapping</span>
+</span></span><span style="display:flex;"><span>legend_text <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">.</span>join([<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>num<span style="color:#e6db74">}</span><span style="color:#e6db74">: </span><span style="color:#e6db74">{</span>name<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#66d9ef">for</span> num, name <span style="color:#f92672">in</span> inverse_mapping<span style="color:#f92672">.</span>items()])
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>gcf()<span style="color:#f92672">.</span>text(<span style="color:#ae81ff">0.02</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">0.18</span>, <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Legend:</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">{</span>legend_text<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span>, ha<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;left&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>tight_layout()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><p><img src="images/demanddatesizeproduct.png" alt="Demand of Size-Product by Active Sales Dates"></p>
+<p>This set of charts provides <strong>granular insights</strong>:</p>
+<ul>
+<li>Which sizes for which products spike at what times</li>
+<li>Helps in forecasting inventory needs for specific variants</li>
+</ul>
+<h3 id="product-category-dropdown">Product Category Dropdown</h3>
+<p>To explore other product categories like this, I have added an <strong>interactive dropdown</strong> that lets you see these plots for every category:</p>
+
+
+<select id="productcategoryImageDropdown" style="
+  font-family: monospace;
+  font-size: 16px;
+  padding: 0.4rem;
+  margin: 1rem 0;
+  border: 1px solid currentColor;
+">
+  
+    <option value="images/productcategory/Kurti.png">Kurti</option>
+  
+    <option value="images/productcategory/Bra.png">Bra</option>
+  
+    <option value="images/productcategory/Cycling Pant.png">Cycling Pant</option>
+  
+    <option value="images/productcategory/Track Pant.png">Track Pant</option>
+  
+    <option value="images/productcategory/Saree.png">Saree</option>
+  
+    <option value="images/productcategory/Lungi.png">Lungi</option>
+  
+    <option value="images/productcategory/Formal Pant.png">Formal Pant</option>
+  
+    <option value="images/productcategory/Plazo.png">Plazo</option>
+  
+    <option value="images/productcategory/Sindoor.png">Sindoor</option>
+  
+    <option value="images/productcategory/Dungarees.png">Dungarees</option>
+  
+    <option value="images/productcategory/Mosquito Net.png">Mosquito Net</option>
+  
+    <option value="images/productcategory/Inner Slips.png">Inner Slips</option>
+  
+    <option value="images/productcategory/Pillow Cover.png">Pillow Cover</option>
+  
+    <option value="images/productcategory/Vest.png">Vest</option>
+  
+    <option value="images/productcategory/Night Dress.png">Night Dress</option>
+  
+    <option value="images/productcategory/Blanket.png">Blanket</option>
+  
+    <option value="images/productcategory/Wallet.png">Wallet</option>
+  
+    <option value="images/productcategory/Blouse.png">Blouse</option>
+  
+    <option value="images/productcategory/Nighties.png">Nighties</option>
+  
+    <option value="images/productcategory/Cap.png">Cap</option>
+  
+    <option value="images/productcategory/Leggings.png">Leggings</option>
+  
+    <option value="images/productcategory/Half Pant.png">Half Pant</option>
+  
+    <option value="images/productcategory/Scarf.png">Scarf</option>
+  
+    <option value="images/productcategory/Towel.png">Towel</option>
+  
+    <option value="images/productcategory/Kurta.png">Kurta</option>
+  
+    <option value="images/productcategory/Dupatta.png">Dupatta</option>
+  
+    <option value="images/productcategory/Mask.png">Mask</option>
+  
+    <option value="images/productcategory/Frock.png">Frock</option>
+  
+    <option value="images/productcategory/Belt.png">Belt</option>
+  
+    <option value="images/productcategory/Stoles.png">Stoles</option>
+  
+    <option value="images/productcategory/Handkerchief.png">Handkerchief</option>
+  
+    <option value="images/productcategory/Petticoat.png">Petticoat</option>
+  
+    <option value="images/productcategory/Socks.png">Socks</option>
+  
+    <option value="images/productcategory/T-Shirt.png">T-Shirt</option>
+  
+    <option value="images/productcategory/Bedsheet.png">Bedsheet</option>
+  
+    <option value="images/productcategory/Shirt.png">Shirt</option>
+  
+    <option value="images/productcategory/Jeans.png">Jeans</option>
+  
+    <option value="images/productcategory/Set.png">Set</option>
+  
+    <option value="images/productcategory/Panties.png">Panties</option>
+  
+    <option value="images/productcategory/Hand Gloves.png">Hand Gloves</option>
+  
+</select>
+
+<img
+  id="productcategorydisplayImage"
+  src="images/productcategory/Kurti.png"
+  alt="Kurti productcategory Analysis"
+/>
+
+<script>
+  document.getElementById("productcategoryImageDropdown").addEventListener('change', function () {
+    const selectedImage = this.value;
+    document.getElementById("productcategorydisplayImage").src = selectedImage;
+  });
+</script>
+
+<h2 id="conclusion">Conclusion</h2>
+<p>This concludes the current stage of my retail store analysis — though it’s far from complete.</p>
+<p>I intentionally chose to publish this blog post <strong>before finalising every part of the analysis</strong>, because:</p>
+<ul>
+<li>I didn’t want to fall into the trap of procrastination while waiting for “completion”</li>
+<li>I have other priorities at the moment and wanted to document my progress so far</li>
+</ul>
+<p>That said, this was a <strong>fun and insightful journey</strong> that reminded me of something very important:</p>
+<blockquote>
+<p><strong>Domain knowledge is essential in data analysis.</strong></p></blockquote>
+<p>Knowing the retail domain helped me:</p>
+<ul>
+<li>Ask better, more relevant questions</li>
+<li>Extract meaningful insights from what initially looked like a pile of transactions</li>
+<li>Helped me in Feature Engineering and creating good description for each products</li>
+</ul>
+<p>This project also helped me understand how <strong>critical it is to structure and clean data thoughtfully</strong>, especially when those fields (like descriptions) are used to derive key features.</p>
+<p>📦 For all the code used in this project, you can check out the <a href="https://github.com/RoopkumarD/retail_store_analysis">GitHub repository</a>.</p>
+<h2 id="future-to-do-list">Future To-Do List</h2>
+<p>Here are some ideas I plan to explore next:</p>
+<ul>
+<li>
+<p><strong><span id="ref-1">[^1]</span>: Day-of-week product distribution:</strong><br>
+Investigate why certain days have higher sales than others</p>
+</li>
+<li>
+<p><strong><span id="ref-2">[^2]</span>: Time-of-day sales trends:</strong><br>
+Determine if specific products are sold more during morning, peak hours, or closing times</p>
+</li>
+<li>
+<p><strong><span id="ref-3">[^3]</span>: Define sales periods based on revenue patterns:</strong><br>
+For each week, treat weekly revenues as a 7D vector and cluster these vectors to define periods of similar sales patterns (i.e., discover seasonality). Thus we can bin each week according to similar revenue pattern across the week.</p>
+</li>
+<li>
+<p><strong>Bundling Analysis:</strong><br>
+Identify which products or categories are frequently bought together</p>
+</li>
+<li>
+<p><strong>Discount Strategy:</strong><br>
+Build a strategy around <code>price_delta</code> to ensure that if a customer  rejects a price, we know whether the product will still sell that day (or later) — to avoid unnecessary discounts</p>
+</li>
+<li>
+<p><strong>Customer-level analysis (aspirational):</strong><br>
+Even though I haven&rsquo;t recorded Customer IDs, is there <em>any</em> proxy or heuristic we can use to understand repeat behaviour or segment customers?</p>
+</li>
+<li>
+<p><strong>Order value investigation:</strong><br>
+Analyse when and where high-value purchases happen</p>
+</li>
+<li>
+<p><strong>Automate feature creation:</strong><br>
+Much of the feature engineering (like cleaning descriptions) was manual — can we automate it intelligently?</p>
+</li>
+<li>
+<p><strong>Quantifying confidence in insights:</strong><br>
+Use statistical methods to quantify how confident we are in the trends or hypotheses discovered</p>
+</li>
+<li>
+<p><strong>Discover new insights from variable distributions:</strong><br>
+Dive deeper into bi variate distributions to surface untapped relationships</p>
+</li>
+</ul>
+<p>Till the next blog post — goodbye and I hope you had a great day! 👋</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>
