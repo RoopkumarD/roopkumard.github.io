@@ -29,7 +29,14 @@
         {{- range $post := $posts -}}
         <li>
             <span>{{- ($post.Date | time.Format site.Params.theme_config.date_format) }}</span>
-            <a href="{{ $post.Permalink | relURL }}">{{ $post.Title }}</a>
+            {{ with $post.Params.redirect_link }}
+                <a href="{{ . }}" target="_blank" rel="noopener">
+                    {{ $post.Title }} ↗
+                </a>
+            {{ else }}
+                <a href="{{ $post.Permalink | relURL }}">{{ $post.Title }}</a>
+            {{ end }}
+	    <!-- <a href="{{ $post.Permalink | relURL }}">{{ $post.Title }}</a> -->
         </li>
         {{ end }}
         {{- if and .show_more $limit_exceeded }}

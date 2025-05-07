@@ -9,9 +9,19 @@
     {{ range .Pages.GroupByDate "2006 Year" }}
     <p>{{ .Key }}</p>
     <ul>
-        {{ range .Pages }}
-            <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
-        {{ end }}
+      <!--        {{ range .Pages }}	-->
+      <!--            <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li> -->
+      <!--        {{ end }} -->
+      {{ range .Pages }}
+      {{ $page := . }}
+	<li>
+	  {{ with $page.Params.redirect_link }}
+	    <a href="{{ . }}" target="_blank" rel="noopener">{{ $page.Title }} ↗</a>
+	  {{ else }}
+	    <a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
+	  {{ end }}
+	</li>
+      {{ end }}
     </ul>
     {{ end }}
 {{ else }}
