@@ -2,18 +2,32 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>roopkumar das</title>
-    <link>http://localhost:1313/</link>
+    <link>https://example.org/</link>
     <description>Recent content on roopkumar das</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 06 May 2025 03:18:12 +0530</lastBuildDate>
-    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://example.org/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Retail Clothing Store Data Analysis</title>
-      <link>http://localhost:1313/posts/retail-clothing-store-analysis/</link>
+      <link>https://example.org/posts/retail-clothing-store-analysis/</link>
       <pubDate>Tue, 06 May 2025 03:18:12 +0530</pubDate>
-      <guid>http://localhost:1313/posts/retail-clothing-store-analysis/</guid>
+      <guid>https://example.org/posts/retail-clothing-store-analysis/</guid>
       <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;&#xA;&lt;p&gt;One fine evening while I was out walking, I thought—why not record data from an offline retail clothing store and do some data analysis? I’m currently learning data analysis, and I wanted to actually &lt;em&gt;use&lt;/em&gt; my knowledge, try stuff out, and hopefully learn something new. This report is the journey of me going from data collection all the way to analysis.&lt;/p&gt;&#xA;&lt;p&gt;After finishing everything, I can confidently say that my domain knowledge helped a lot during both the data collection and analysis process. It was honestly the main reason I could come up with the right questions to ask and actually answer them in a meaningful way. That domain knowledge came from me working in the shop for a few months, so I had some idea of how things worked on the ground.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Online Retail Gift Store Analysis</title>
+      <link>https://example.org/posts/online-retail-gift-store-analysis/</link>
+      <pubDate>Tue, 25 Mar 2025 03:16:00 +0530</pubDate>
+      <guid>https://example.org/posts/online-retail-gift-store-analysis/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Titanic Survival Prediction using RandomForestClassifier</title>
+      <link>https://example.org/posts/titanic-survival-prediction-using-randomforestclassifier/</link>
+      <pubDate>Tue, 30 Apr 2024 04:27:00 +0530</pubDate>
+      <guid>https://example.org/posts/titanic-survival-prediction-using-randomforestclassifier/</guid>
+      <description></description>
     </item>
   </channel>
 </rss>
